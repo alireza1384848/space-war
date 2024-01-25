@@ -10,7 +10,12 @@ struct profile {
 	char Password[40];
 	char email[40];
 };
-void game_menu();
+void signin_player2(int loc_player_1);
+void change_email(int loc, char * username);
+void Change_Username(int loc);
+void changepass_1(int loc,char*username);
+void game_menu(char* username);
+void Change_profile(char* username);
 void changepass(char* email, int loc);
 void forgetpass();
 void menu_inform();
@@ -54,6 +59,7 @@ void start_page() {
 
 	menu_inform();
 }
+
 void menu_inform() {
 	int selected=1;
 	int keypress;
@@ -108,6 +114,7 @@ void menu_inform() {
 
 
 }
+
 void signup() {
 	system("cls");
 	profile prof;
@@ -224,6 +231,7 @@ void signup() {
 	system("cls");
 	signin();
 }
+
 int Username_checker(const char const * username){
 	int i = 1;
 	int returnere = 0;
@@ -243,6 +251,7 @@ int Username_checker(const char const * username){
 	fclose(Data);
 	return returnere;
 }
+
 int passfinder(const int loc,char * pass) {
 	int i = 1;
 	FILE* Data;
@@ -262,6 +271,7 @@ int passfinder(const int loc,char * pass) {
 	
 
 }
+
 void signin() {
 	char pass1;
 	int i = 0;
@@ -295,7 +305,7 @@ void signin() {
 		system("color 00");
 	if (Username_checker(username) >= 1&&passfinder(Username_checker(username),pass)==0)
 	{
-		game_menu();
+		game_menu(username);
 	}
 	else {
 		system("color 01");
@@ -358,6 +368,7 @@ void signin() {
 
 
 }
+
 void forgetpass() {
 	system("cls");
 	char Username[40];
@@ -381,13 +392,14 @@ void forgetpass() {
 			scanf("%s", Email);
 			reset();
 			system("cls");
-	changepass(Email, Username_checker(Username));
+	changepass(Email,Username_checker(Username));
 	}
 	else {
 		printf("!!!!!!!!Username isn,t correct!!!!!!!!!!\n");
 		forgetpass();
 	}
 }
+
 void changepass(char * email,int loc) {
 	int i = 1;
 	char newpass[40];
@@ -435,7 +447,7 @@ void changepass(char * email,int loc) {
 				fwrite(&User_data[j], sizeof(profile), 1, Data);
 			}
 				fclose(Data);
-			    signin();
+					signin();
 		}
 		else {
 			system("cls");
@@ -464,7 +476,8 @@ void changepass(char * email,int loc) {
 
 
 }
-void game_menu() {
+
+void game_menu(char * username) {
 	int selected = 1;
 	int keypress;
 	int p = 45;
@@ -507,10 +520,10 @@ void game_menu() {
 	switch (selected)
 	{
 	case 1:
-		//signin();                                                           //start
+		signin_player2(Username_checker(username));                                                //start
 		break;
 	case 2:
-		//Change_profile();
+		Change_profile(username);
 		break;
 	case 3:
 		;                                                                      ///history
@@ -526,6 +539,262 @@ void game_menu() {
 
 
 }
+
+void Change_profile(char * username) {
+	system("cls");
+	int selected = 1;
+	int keypress;
+	int p = 45;
+	int p1 = 62;
+	int loc = Username_checker(username);
+	while (1) {
+		printf("Change profile\n");
+		cyan();
+		if (selected == 1)
+			printf("%c%c", p, p1);
+		printf("1.Change password\n");
+		reset();
+		green();
+		if (selected == 2)
+			printf("%c%c", p, p1);
+		printf("2.Change Username\n");
+		reset;
+		red();
+		if (selected == 3)
+			printf("%c%c", p, p1);
+		printf("3.Change Email\n");
+		reset();
+		keypress = _getch();
+		if (keypress == 72 && selected > 1) {
+			selected--;
+		}
+		else if (keypress == 80 && selected < 4) {
+			selected++;
+		}
+		else if (keypress == 13) {
+			break;
+		}
+		system("cls");
+
+	}
+	switch (selected)
+	{
+	case 1:
+		changepass_1(loc,username);                                                        
+		break;
+	case 2:
+		Change_Username(loc);
+		break;
+	case 3:
+		change_email(loc,username);
+		break;
+	default:
+		break;
+	}
+}
+
+void changepass_1(int loc,char * username) {
+	system("cls");
+	int i = 1;
+	char newpass[40];
+	char newpass1[40];
+	FILE* Data;
+	Data = fopen("profile.bin", "rb");
+	profile User_data[50];
+	while (!feof(Data)) {
+		fread(&User_data[i], sizeof(profile), 1, Data);
+		i++;
+	}
+	fclose(Data);
+		cyan();
+		printf("\t\tChange password page\n\n");
+		reset();
+		yellow();
+		printf("Enter your New password=");
+		scanf("%s", newpass);
+		reset();
+		while (1)
+		{
+			if (strlen(newpass) < 8) {
+				system("cls");
+				printf("\t\tChange password page\n\n");
+				printf("Your Password is Too Short \nEnter Other Password=");
+				blue();
+				scanf("%s", newpass);
+				reset();
+			}
+			else {
+				break;
+			}
+		}
+		red();
+		printf("Enter password Again=");
+		scanf("%s", newpass1);
+		if (strcmp(newpass, newpass1) == 0) {
+			strcpy(User_data[loc].Password, newpass);
+			Data = fopen("profile.bin", "wb");
+			while (Data == NULL) {
+				Data = fopen("profile.bin", "wb");
+			}
+			for (int j = 1; j <= i; j++) {
+				fwrite(&User_data[j], sizeof(profile), 1, Data);
+			}
+			fclose(Data);
+			game_menu(username);
+		}
+		else {
+			system("cls");
+			cyan();
+			printf("\t\tChange password page\n\n");
+			reset();
+			printf("!!!!!!!Passwords Are NOT Same!!!!!!!!!");
+			Sleep(1200);
+			system("cls");
+			changepass_1(loc, username);
+		}
+}
+
+void Change_Username(int loc) {
+	system("cls");
+	int i = 1;
+	char newUsername[40];
+	//char newUsername1[40];
+	FILE* Data;
+	Data = fopen("profile.bin", "rb");
+	profile User_data[50];
+	while (!feof(Data)) {
+		fread(&User_data[i], sizeof(profile), 1, Data);
+		i++;
+	}
+	fclose(Data);
+	cyan();
+	printf("\t\tChange UserName page\n\n");
+	reset();
+	yellow();
+	printf("Enter your New UserName=");
+	scanf("%s", newUsername);
+	reset();
+	while (1)
+	{
+		if (Username_checker(newUsername) > 0) {
+			system("cls");
+			printf("\t\tChange UseName page\n\n");
+			printf("Your Username Was already Token \nEnter Other Username=");
+			blue();
+			scanf("%s", newUsername);
+			reset();
+		}
+		else {
+			break;
+		}
+	}
+		strcpy(User_data[loc].UserName, newUsername);
+		Data = fopen("profile.bin", "wb");
+		while (Data == NULL) {
+			Data = fopen("profile.bin", "wb");
+		}
+		for (int j = 1; j <= i; j++) {
+			fwrite(&User_data[j], sizeof(profile), 1, Data);
+		}
+		fclose(Data);
+		system("cls");
+		game_menu(newUsername);
+}
+
+void change_email(int loc, char * username){
+	system("cls");
+	int i = 1;
+	char newEmail[40];
+	//char newUsername1[40];
+	FILE* Data;
+	Data = fopen("profile.bin", "rb");
+	profile User_data[50];
+	while (!feof(Data)) {
+		fread(&User_data[i], sizeof(profile), 1, Data);
+		i++;
+	}
+	fclose(Data);
+	cyan();
+	printf("\t\tChange Email page\n\n");
+	reset();
+	yellow();
+	printf("Enter your New Email=");
+	scanf("%s", newEmail);
+	reset();
+	while (1)
+	{
+		if (Username_checker(newEmail) > 0) {
+			system("cls");
+			printf("\t\tChange UseName page\n\n");
+			printf("Your Username Was already Token \nEnter Other Username=");
+			blue();
+			scanf("%s", newEmail);
+			reset();
+		}
+		else {
+			break;
+		}
+	}
+	strcpy(User_data[loc].email, newEmail);
+	Data = fopen("profile.bin", "wb");
+	while (Data == NULL) {
+		Data = fopen("profile.bin", "wb");
+	}
+	for (int j = 1; j <= i; j++) {
+		fwrite(&User_data[j], sizeof(profile), 1, Data);
+	}
+	fclose(Data);
+	system("cls");
+	game_menu(newEmail);
+}
+
+void signin_player2(int loc_player_1) {
+	char pass1;
+	int i = 0;
+	char username[40];
+	char pass[40];
+	system("cls");
+	system("color 81");
+	printf("\t\tSign in page  :  player 2\n");
+	system("color 85");
+	printf("Enter Your UserName=");
+	yellow();
+	scanf("%s", username);
+	reset();
+	system("cls");
+	system("color 71");
+	blue();
+	printf("\t\tSign in page  :  player 2\n");
+	reset();
+	system("color 71");
+	magneta();
+	printf("Enter Your Password=");
+	reset();
+	while ((pass1 = _getch()) != '\r') {
+		pass[i] = pass1;
+		i++;
+		yellow();
+		printf("*");
+		reset();
+	}
+	system("cls");
+	system("color 00");
+
+	int loc_player_2 = Username_checker(username);
+
+	if (Username_checker(username) >= 1 && passfinder(Username_checker(username), pass) == 0)
+	{
+		////////////start game
+	}
+	else {
+		signin_player2(loc_player_1);
+	}
+
+
+}
+
+
+
 
 
 
