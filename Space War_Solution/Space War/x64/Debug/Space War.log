@@ -1,9 +1,10 @@
 ﻿  Space War.cpp
-F:\My_project\Space War_Solution\Space War\Space War.cpp(16,33): warning C4114: same type qualifier used more than once
-F:\My_project\Space War_Solution\Space War\Space War.cpp(73,3): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(217,33): warning C4114: same type qualifier used more than once
-F:\My_project\Space War_Solution\Space War\Space War.cpp(301,4): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(306,4): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(344,2): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(347,2): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(17,33): warning C4114: same type qualifier used more than once
+F:\My_project\Space War_Solution\Space War\Space War.cpp(74,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(227,33): warning C4114: same type qualifier used more than once
+F:\My_project\Space War_Solution\Space War\Space War.cpp(324,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(329,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(370,2): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(373,2): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(484,3): warning C4551: function call missing argument list
   Space War.vcxproj -> F:\My_project\Space War_Solution\x64\Debug\Space War.exe

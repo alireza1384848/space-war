@@ -10,6 +10,7 @@ struct profile {
 	char Password[40];
 	char email[40];
 };
+void game_menu();
 void changepass(char* email, int loc);
 void forgetpass();
 void menu_inform();
@@ -138,37 +139,43 @@ void signup() {
 		}
 	}
 	system("cls");
-	//////////////////////////////////////////
-	magneta();
-	printf("\nEnter Your Password=");
+	/////////////////////////////////////////// /
+	system("color 7d");
+	printf("\t\tsign up page\n\n");
+	printf("Enter Your Password=");
+	blue();
 	scanf("%s", pass);
 	reset();
-	system("color 70");
+	system("color 7d");
 	while (1)
 	{
 		if (strlen(pass) < 8) {
 			system("cls");
-			printf("\nYour Password is Too Short \nEnter Other Password=");
+			printf("\t\tsign up page\n\n");
+			printf("Your Password is Too Short \nEnter Other Password=");
+			blue();
 			scanf("%s", pass);
+			reset();
 		}
 		else {
 			strcpy(prof.Password, pass);
 			break;
 		}
 	}
-	printf("\nEnter Your Password Again=");
-	magneta();
+	printf("Enter Your Password Again=");
+	blue();
 	scanf("%s",pass);
 	reset();
-	system("color 70");
+	
 	while (1)
 	{
 		if (strcmp(pass,prof.Password)!=0) {
-			printf("\nYour Passwords isn,t same\nEnter Password=");
-			magneta();
+
+			printf("Your Passwords isn,t same\nEnter Password Again=");
+			blue();
 			scanf("%s", pass);
 			reset();
-			system("color 70");
+			system("color 7d");
 		}
 		else {
 			break;
@@ -177,6 +184,7 @@ void signup() {
 	/////////////////////////////////////
 	char email[40];
 	system("cls");
+	printf("\t\tsign up page\n\n");
 	printf("\nEnter Your Email=");
 	magneta();
 	scanf("%s", email);
@@ -212,7 +220,9 @@ void signup() {
 	fclose(Prof_Data);
 	system("cls");
 	printf("Your sign up is successful\n Now you can sign in");
-	menu_inform();
+	Sleep(1200);
+	system("cls");
+	signin();
 }
 int Username_checker(const char const * username){
 	int i = 1;
@@ -257,30 +267,40 @@ void signin() {
 	int i = 0;
 	char username[40];
 	char pass[40];
-	system("color 85");
 	system("cls");
+	system("color 81");
+	printf("\t\tSign in page\n");
+	system("color 85");
 	printf("Enter Your UserName=");
 	yellow();
 	scanf("%s", username);
 	reset();
 	system("cls");
-	system("color 85");
+	system("color 71");
+	blue();
+	printf("\t\tSign in page\n");
+	reset();
+	system("color 71");
+	magneta();
 	printf("Enter Your Password=");
-	yellow();
+	reset();
 	while ((pass1 = _getch()) != '\r') {
 		pass[i] = pass1;
 		i++;
+	yellow();
 		printf("*");
-	}
 	reset();
+	}
 	system("cls");
-	
 		system("color 00");
 	if (Username_checker(username) >= 1&&passfinder(Username_checker(username),pass)==0)
 	{
-//start menu
+		game_menu();
 	}
 	else {
+		system("color 01");
+		printf("\t\tSign in page\n");
+		system("color 00");
 		printf("!!!!!!!!!!!!!Your Username or password is Wrong please try again!!!!!!!!!!!!!!!");
 		Sleep(1000);
 		system("cls");
@@ -289,6 +309,9 @@ void signin() {
 		int p = 45;
 		int p1 = 62;
 		while (1) {
+			yellow();
+			printf("\t\tMenu\n");
+			reset();
 			red();
 			if (selected == 1)
 				printf("%c%c", p, p1);
@@ -337,26 +360,32 @@ void signin() {
 }
 void forgetpass() {
 	system("cls");
-	magneta();
 	char Username[40];
 	char Email[40];
+	cyan();
+	printf("\t\tForget Password Page\n");
+	reset();
+	magneta();
 	printf("Enter your UserName=");
 	reset;
 	green();
 	scanf("%s", Username);
 	reset;
 	system("cls");
-	if (Username_checker(Username) > 0) {
-			printf("Enter Your Email=");
+	if (Username_checker(Username) != 0) {
+		cyan();
+		printf("\t\tForget Password Page\n");
+		reset();
+		printf("Enter Your Email=");
 			red();
 			scanf("%s", Email);
 			reset();
+			system("cls");
 	changepass(Email, Username_checker(Username));
 	}
 	else {
 		printf("!!!!!!!!Username isn,t correct!!!!!!!!!!\n");
 		forgetpass();
-		//star menu game
 	}
 }
 void changepass(char * email,int loc) {
@@ -372,21 +401,47 @@ void changepass(char * email,int loc) {
 	}
 	fclose(Data);
 	if (strncmp(User_data[loc].email, email, strlen(User_data[loc].email)) == 0) {
+		cyan();
+		printf("\t\tChange password page\n\n");
+		reset();
 		yellow();
 		printf("Enter your New password=");
 		scanf("%s", newpass);
 		reset();
+		while (1)
+		{
+			if (strlen(newpass) < 8) {
+				system("cls");
+				printf("\t\tChange password page\n\n");
+				printf("Your Password is Too Short \nEnter Other Password=");
+				blue();
+				scanf("%s", newpass);
+				reset();
+			}
+			else {
+				break;
+			}
+		}
 		red();
 		printf("Enter password Again=");
 		scanf("%s", newpass1);
 		if (strcmp(newpass, newpass1) == 0) {
 			strcpy(User_data[loc].Password, newpass);
-			Data = fopen("profile.bin", "w");
+			Data = fopen("profile.bin", "wb");
+			while (Data==NULL) {
+				Data = fopen("profile.bin", "wb");
+			}
 			for (int j = 1; j <= i ; j++) {
 				fwrite(&User_data[j], sizeof(profile), 1, Data);
 			}
+				fclose(Data);
+			    signin();
 		}
 		else {
+			system("cls");
+			cyan();
+			printf("\t\tChange password page\n\n");
+			reset();
 			printf("!!!!!!!Passwords Are NOT Same!!!!!!!!!");
 			Sleep(1200);
 			system("cls");
@@ -395,9 +450,13 @@ void changepass(char * email,int loc) {
 		//fseek(Data, sizeof(profile) * (loc - 1), SEEK_SET);
 	}
 	else {
-		
+		red();
+		printf("\t\tYour Email isn,t correct!!!!!!!\n");
+		Sleep(1200);
+		reset();
+		forgetpass();
 	}
-	fclose(Data);
+	
 
 
 
@@ -405,6 +464,72 @@ void changepass(char * email,int loc) {
 
 
 }
+void game_menu() {
+	int selected = 1;
+	int keypress;
+	int p = 45;
+	int p1 = 62;
+
+	while (1) {
+		printf("Game menu\n");
+		cyan();
+		if (selected == 1)
+			printf("%c%c", p, p1);
+		printf("1.Start\n");
+		reset();
+		green();
+		if (selected == 2)
+			printf("%c%c", p, p1);
+		printf("2.Change Profile information\n");
+		reset;
+		red();
+		if (selected == 3)
+			printf("%c%c", p, p1);
+		printf("3.History\n");
+		reset();
+		magneta();
+		if (selected == 4)
+			printf("%c%c", p, p1);
+		printf("4.Return To Main Menu\n");
+		keypress = _getch();
+		if (keypress == 72 && selected > 1) {
+			selected--;
+		}
+		else if (keypress == 80 && selected < 4) {
+			selected++;
+		}
+		else if (keypress == 13) {
+			break;
+		}
+		system("cls");
+
+	}
+	switch (selected)
+	{
+	case 1:
+		//signin();                                                           //start
+		break;
+	case 2:
+		//Change_profile();
+		break;
+	case 3:
+		;                                                                      ///history
+		break;
+	case 4:
+		system("cls");
+		menu_inform();
+		break;
+	default:
+		break;
+	}
+
+
+
+}
+
+
+
+
 
 
 int main() {
