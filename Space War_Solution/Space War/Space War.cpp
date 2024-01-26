@@ -1,15 +1,20 @@
-#pragma warning(disable:4996)
+﻿#pragma warning(disable:4996)
 #include<stdio.h>
 #include<string.h>
 #include<conio.h>
 #include<stdlib.h>
 #include<windows.h>
 #include<time.h>
+#include <io.h>
+#include <fcntl.h>
+#pragma execution_character_set("utf-8")
+
 struct profile {
 	char UserName[40];
 	char Password[40];
 	char email[40];
 };
+void shape_Map();
 void signin_player2(int loc_player_1);
 void change_email(int loc, char * username);
 void Change_Username(int loc);
@@ -38,6 +43,9 @@ void black() {
 }
 void green() {
 	printf("\033[1;32m");
+}
+void white() {
+	printf("\033[1;37m");
 }
 void cyan() {
 	printf("\033[1;36m");
@@ -784,7 +792,7 @@ void signin_player2(int loc_player_1) {
 
 	if (Username_checker(username) >= 1 && passfinder(Username_checker(username), pass) == 0)
 	{
-		////////////start game
+		shape_Map();
 	}
 	else {
 		signin_player2(loc_player_1);
@@ -793,7 +801,130 @@ void signin_player2(int loc_player_1) {
 
 }
 
+void shape_Map() {
 
+	SetConsoleOutputCP(65001);
+	_setmode(_fileno(stdout), _O_U16TEXT);
+	wchar_t map[24][112];
+	for (int i = 0; i < 24; i++) {
+		for (int j = 0; j < 112; j++) {
+			map[i][j] = L' ';
+		}
+
+	}
+
+	for (int i = 0; i < 24; i++) {
+		map[i][0] = L'█';
+	}
+	for (int i = 0; i < 112; i++) {
+		map[0][i] = L'█';
+	}
+	for (int i = 0; i < 112; i++) {
+		map[23][i] = L'█';
+	}
+	for (int i = 0; i < 24; i++) {
+		map[i][111] = L'█';
+	}
+	///////////////////////////
+	for (int i = 12; i < 20; i++) {
+
+		map[4][i] = L'█';
+
+	}
+	for (int i = 4; i < 16; i++) {
+		map[i][19] = L'█';
+	}
+
+
+
+	for (int i = 19; i > 12; i--) {
+		map[16][i] = L'█';
+	}
+	map[5][20] = L'║';
+	map[6][20] = L'║';
+
+	map[15][20] = L'║';
+	map[14][20] = L'║';
+	map[2][27] = L'█';
+	map[3][27] = L'█';
+	map[2][28] = L'║';
+	map[3][28] = L'║';
+
+	map[18][27] = L'█';
+	map[19][27] = L'█';
+	for (int i = 5; i < 16; i++) {
+		if (i == 10)
+			map[i][56] = L'║';
+		else
+			map[i][56] = L'█';
+	}
+
+
+	for (int i = 50; i > 40; i--) {
+		map[14][i] = L'█';
+	}
+	for (int i = 62; i < 72; i++) {
+		map[6][i] = L'█';
+	}
+	//////////////////
+	for (int i = 99; i > 91; i--) {
+		map[4][i] = L'█';
+	}
+
+	for (int i = 4; i < 16; i++) {
+		map[i][92] = L'█';
+	}
+	for (int i = 92; i < 100; i++) {
+		map[16][i] = L'█';
+	}
+	map[5][91] = L'║';
+	map[6][91] = L'║';
+
+
+	map[15][91] = L'║';
+	map[14][91] = L'║';
+
+	map[2][84] = L'█';
+	map[3][84] = L'█';
+	map[18][83] = L'║';
+	map[19][83] = L'║';
+
+	map[18][84] = L'█';
+	map[19][84] = L'█';
+
+	int m = 0;
+	for (int i = 0; i < 24; i++) {
+		for (int j = 0; j < 112; j++) {
+			if (i == 4 && j == 55) {
+				map[i][j] = L'❤';
+				wprintf(L"%wc", map[i][j]);
+			}
+			else if (j == 11 && i == 19) {
+				map[i][j] = L'֍';
+				wprintf(L"\033[1;33m֍\033[0m");
+			}
+			else if (j == 101 && i == 19) {
+				map[i][j] = L'֍';
+				wprintf(L"\033[1;33m֍\033[0m");
+			}
+			else if (i == 17 && j == 29) {
+				map[i][j] = L'෧';
+				wprintf(L"\033[1;37m෧\033[0m");
+			}
+			else if (i == 3 && j == 88) {
+				map[i][j] = L'෧';
+				wprintf(L"\033[1;37m෧\033[0m");
+			}
+			else
+				wprintf(L"%wc", map[i][j]);
+
+		}
+		wprintf(L"\n");
+
+	}
+
+	_setmode(_fileno(stdout), _O_TEXT);
+}
 
 
 

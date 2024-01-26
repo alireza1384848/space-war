@@ -1,11 +1,11 @@
 ﻿  Space War.cpp
-F:\My_project\Space War_Solution\Space War\Space War.cpp(22,33): warning C4114: same type qualifier used more than once
-F:\My_project\Space War_Solution\Space War\Space War.cpp(80,3): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(235,33): warning C4114: same type qualifier used more than once
-F:\My_project\Space War_Solution\Space War\Space War.cpp(334,4): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(339,4): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(381,2): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(384,2): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(497,3): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(561,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(27,33): warning C4114: same type qualifier used more than once
+F:\My_project\Space War_Solution\Space War\Space War.cpp(88,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(243,33): warning C4114: same type qualifier used more than once
+F:\My_project\Space War_Solution\Space War\Space War.cpp(342,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(347,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(389,2): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(392,2): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(505,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(569,3): warning C4551: function call missing argument list
   Space War.vcxproj -> F:\My_project\Space War_Solution\x64\Debug\Space War.exe
