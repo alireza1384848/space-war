@@ -1,0 +1,22 @@
+﻿  erfan.cpp
+F:\My_project\erfan\erfan\erfan.cpp(113,31): error C2131: expression did not evaluate to a constant
+F:\My_project\erfan\erfan\erfan.cpp(113,31): message : failure was caused by a read of a variable outside its lifetime
+F:\My_project\erfan\erfan\erfan.cpp(113,31): message : see usage of 'g1'
+F:\My_project\erfan\erfan\erfan.cpp(113,40): error C2131: expression did not evaluate to a constant
+F:\My_project\erfan\erfan\erfan.cpp(113,40): message : failure was caused by a read of a variable outside its lifetime
+F:\My_project\erfan\erfan\erfan.cpp(113,40): message : see usage of 'g1'
+F:\My_project\erfan\erfan\erfan.cpp(114,22): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+F:\My_project\erfan\erfan\erfan.cpp(281,31): error C2131: expression did not evaluate to a constant
+F:\My_project\erfan\erfan\erfan.cpp(281,31): message : failure was caused by a read of a variable outside its lifetime
+F:\My_project\erfan\erfan\erfan.cpp(281,31): message : see usage of 'g2'
+F:\My_project\erfan\erfan\erfan.cpp(281,40): error C2131: expression did not evaluate to a constant
+F:\My_project\erfan\erfan\erfan.cpp(281,40): message : failure was caused by a read of a variable outside its lifetime
+F:\My_project\erfan\erfan\erfan.cpp(281,40): message : see usage of 'g2'
+F:\My_project\erfan\erfan\erfan.cpp(282,22): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+F:\My_project\erfan\erfan\erfan.cpp(448,31): error C2131: expression did not evaluate to a constant
+F:\My_project\erfan\erfan\erfan.cpp(448,31): message : failure was caused by a read of a variable outside its lifetime
+F:\My_project\erfan\erfan\erfan.cpp(448,31): message : see usage of 'g3'
+F:\My_project\erfan\erfan\erfan.cpp(448,40): error C2131: expression did not evaluate to a constant
+F:\My_project\erfan\erfan\erfan.cpp(448,40): message : failure was caused by a read of a variable outside its lifetime
+F:\My_project\erfan\erfan\erfan.cpp(448,40): message : see usage of 'g3'
+F:\My_project\erfan\erfan\erfan.cpp(449,22): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
