@@ -14,7 +14,8 @@ struct profile {
 	char Password[40];
 	char email[40];
 };
-void shape_Map();
+void game_play_map_1();
+void shape_Map(wchar_t map[24][112]);
 void signin_player2(int loc_player_1);
 void change_email(int loc, char * username);
 void Change_Username(int loc);
@@ -28,6 +29,43 @@ int Username_checker(const char const* username);
 void signup();
 void start_page();
 void signin();
+////////////////////////////
+#define PLAYER1_UP 'W'
+#define PLAYER1_DOWN 'S'
+#define PLAYER1_LEFT 'A'
+#define PLAYER1_RIGHT 'D'
+#define PLAYER1_SHOOT 'C'
+
+#define PLAYER2_UP 'I'
+#define PLAYER2_DOWN 'K'
+#define PLAYER2_LEFT 'J'
+#define PLAYER2_RIGHT 'L'
+#define PLAYER2_SHOOT 'N'
+
+//COORD structure represents the coordinates of a character cell in the console screen buffer
+COORD moveDirection(COORD position, int dx, int dy) {
+	position.X += dx;
+	position.Y += dy;
+	return position;
+}
+
+BOOL keyPressed(int key) {
+	//This function returns a short integer that indicates whether a particular key is pressed or not.
+	return GetAsyncKeyState(key);
+	//returns a non-zero value if the key is currently pressed. If not, it will return 0.
+}
+
+
+
+void hidecursor()
+{
+	HANDLE consoleHandle = GetStdHandle(STD_OUTPUT_HANDLE);
+	CONSOLE_CURSOR_INFO info;
+	info.dwSize = 100;
+	info.bVisible = FALSE;
+	SetConsoleCursorInfo(consoleHandle, &info);
+}
+
 ///////////////////////////make color
 void magneta() {
 	printf("\033[1;35m");
@@ -792,7 +830,8 @@ void signin_player2(int loc_player_1) {
 
 	if (Username_checker(username) >= 1 && passfinder(Username_checker(username), pass) == 0)
 	{
-		shape_Map();
+	
+		game_play_map_1();
 	}
 	else {
 		signin_player2(loc_player_1);
@@ -801,11 +840,11 @@ void signin_player2(int loc_player_1) {
 
 }
 
-void shape_Map() {
+void shape_Map(wchar_t map[24][112]) {
 
 	SetConsoleOutputCP(65001);
 	_setmode(_fileno(stdout), _O_U16TEXT);
-	wchar_t map[24][112];
+	
 	for (int i = 0; i < 24; i++) {
 		for (int j = 0; j < 112; j++) {
 			map[i][j] = L' ';
@@ -925,7 +964,6 @@ void shape_Map() {
 
 	_setmode(_fileno(stdout), _O_TEXT);
 }
-
 void shape_Map_2() {
 	SetConsoleOutputCP(65001);
 	_setmode(_fileno(stdout), _O_U16TEXT);
@@ -1095,7 +1133,398 @@ void shape_Map_2() {
 
 	_setmode(_fileno(stdout), _O_TEXT);
 }
+void game_play_map_1() {
+	int up = 0, down = 0, right = 0, left = 0;
+	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
+	int health_player_1 = 5;
+	int health_player_2 = 5;
+	bool ghalb = 1;
 
+
+	wchar_t map[24][112];
+	COORD player1_pos = { 10, 10 };
+	COORD player2_pos = { 100, 10 };
+	COORD saved_player1_pos = { 0,0 };
+	COORD player1_bullet = { -1, -1 };
+	COORD player2_bullet = { -1, -1 };
+
+	//DWORD stands for “Double Word” and is used to represent 32-bit unsigned integers
+	DWORD bytes_written;
+	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	int U = 0, D = 0, L = 0, R = 0;
+	int U2 = 0, D2 = 0, L2 = 0, R2 = 0;
+	hidecursor();
+	while (1) {
+		// Clear screen
+		system("cls");
+
+		// Input handling for Player 1
+		if (keyPressed(PLAYER1_UP) && map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] != L'█' && map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] != L'║') {
+			up = 1; down = 0; right = 0; left = 0;
+			if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] == L'෧') {
+				health_player_1--;
+				player1_pos = { 10 , 10 };
+			}
+			else if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] == L'֍') {
+				if (moveDirection(player1_pos, 0, -1).X == 101)
+					player1_pos = { 11,19 };
+				else
+					player1_pos = { 101,19 };
+			}
+			else if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] == L'❤') {
+				health_player_1 += 5;
+				ghalb = 0;
+				map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] = L' ';
+				player1_pos = moveDirection(player1_pos, 0, -1);
+
+			}
+
+			else
+				player1_pos = moveDirection(player1_pos, 0, -1);
+		}
+		if (keyPressed(PLAYER1_DOWN) && map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] != L'█' && map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] != L'║') {
+			down = 1; up = 0; right = 0; left = 0;
+
+
+			if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] == L'෧')
+			{
+				health_player_1--;
+				player1_pos = { 10 , 10 };
+			}
+
+			else if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] == L'֍') {
+				if (moveDirection(player1_pos, 0, 1).X == 101)
+					player1_pos = { 11,19 };
+				else
+					player1_pos = { 101,19 };
+			}
+			else if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] == L'❤')
+			{
+				health_player_1 += 5;
+				ghalb = 0;
+				map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] = L' ';
+				player1_pos = moveDirection(player1_pos, 0, 1);
+			}
+
+
+			else
+				player1_pos = moveDirection(player1_pos, 0, 1);
+		}
+		if (keyPressed(PLAYER1_LEFT) && map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] != L'█' && map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] != L'║') {
+			left = 1; up = 0; down = 0; right = 0;
+			if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] == L'෧') {
+				health_player_1--;
+				player1_pos = { 10 , 10 };
+			}
+			else if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] == L'֍') {
+				if (moveDirection(player1_pos, -1, 0).X == 101)
+					player1_pos = { 11,19 };
+				else
+					player1_pos = { 101,19 };
+			}
+			else if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] == L'❤')
+			{
+				health_player_1 += 5;
+				ghalb = 0;
+				map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] = L' ';
+				player1_pos = moveDirection(player1_pos, -1, 0);
+			}
+
+			else
+				player1_pos = moveDirection(player1_pos, -1, 0);
+		}
+		if (keyPressed(PLAYER1_RIGHT) && map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] != L'█' && map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] != L'║')
+		{
+			right = 1; up = 0; down = 0; left = 0;
+			if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] == L'෧') {
+				health_player_1--;
+				player1_pos = { 10 , 10 };
+			}
+			else if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] == L'֍') {
+				if (moveDirection(player1_pos, 1, 0).X == 101)
+					player1_pos = { 11,19 };
+				else
+					player1_pos = { 101,19 };
+			}
+			else if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] == L'❤')
+			{
+				health_player_1 += 5;
+				ghalb = 0;
+				map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] = L' ';
+				player1_pos = moveDirection(player1_pos, 1, 0);
+			}
+
+			else
+				player1_pos = moveDirection(player1_pos, 1, 0);
+
+		}
+		if (keyPressed(PLAYER1_SHOOT)) {
+			if (up == 1) {
+				player1_bullet = moveDirection(player1_pos, 0, -1);
+				U = 1; D = 0; L = 0; R = 0;
+			}
+			else if (down == 1) {
+				player1_bullet = moveDirection(player1_pos, 0, 1);
+				D = 1; U = 0; L = 0; R = 0;
+			}
+			else if (left == 1) {
+				player1_bullet = moveDirection(player1_pos, -1, 0);
+				L = 1; U = 0; D = 0; R = 0;
+			}
+			else if (right == 1) {
+				player1_bullet = moveDirection(player1_pos, 1, 0);
+				R = 1; U = 0; D = 0; L = 0;
+			}
+
+		}
+
+		// Input handling for Player 2
+		if (keyPressed(PLAYER2_UP) && map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] != L'█' && map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] != L'║') {
+			up_2 = 1; down_2 = 0; right_2 = 0; left_2 = 0;
+			if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'෧') {
+				health_player_2--;
+				player2_pos = { 100 , 10 };
+			}
+			else if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'֍') {
+				if (moveDirection(player2_pos, 0, -1).X == 101)
+					player2_pos = { 11,19 };
+				else
+					player2_pos = { 101,19 };
+			}
+			else if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'❤')
+			{
+				health_player_2 += 5;
+				ghalb = 0;
+				map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'❤';
+				player2_pos = moveDirection(player2_pos, 0, -1);
+			}
+
+
+
+			else
+				player2_pos = moveDirection(player2_pos, 0, -1);
+		}
+		if (keyPressed(PLAYER2_DOWN) && map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] != L'█' && map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] != L'║')
+		{
+			up_2 = 0; down_2 = 1; right_2 = 0; left_2 = 0;
+			if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'෧') {
+				health_player_2--;
+				player2_pos = { 100 , 10 };
+			}
+			else if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'֍') {
+				if (moveDirection(player2_pos, 0, 1).X == 101)
+					player2_pos = { 11,19 };
+				else
+					player2_pos = { 101,19 };
+			}
+			else if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'❤')
+			{
+				health_player_2 += 5;
+				ghalb = 0;
+				map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'❤';
+				player2_pos = moveDirection(player2_pos, 0, 1);
+			}
+
+
+			else
+				player2_pos = moveDirection(player2_pos, 0, 1);
+		}
+		if (keyPressed(PLAYER2_LEFT) && map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] != L'█' && map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] != L'║')
+		{
+			up_2 = 0; down_2 = 0; right_2 = 0; left_2 = 1;
+			if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'෧') {
+				health_player_2--;
+				player2_pos = { 100 , 10 };
+			}
+			else if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'֍') {
+				if (moveDirection(player2_pos, -1, 0).X == 101)
+					player2_pos = { 11,19 };
+				else
+					player2_pos = { 101,19 };
+			}
+			else if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'❤')
+			{
+				health_player_2 += 5;
+				ghalb = 0;
+				map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'❤';
+				player2_pos = moveDirection(player2_pos, -1, 0);
+			}
+
+			else
+				player2_pos = moveDirection(player2_pos, -1, 0);
+
+		}
+		if (keyPressed(PLAYER2_RIGHT) && map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] != L'█' && map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] != L'║')
+		{
+			up_2 = 0; down_2 = 0; right_2 = 1; left_2 = 0;
+			if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'෧') {
+				health_player_2--;
+				player2_pos = { 100 , 10 };
+			}
+			else if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'֍') {
+				if (moveDirection(player2_pos, 1, 0).X == 101)
+					player2_pos = { 11,19 };
+				else
+					player2_pos = { 101,19 };
+			}
+			else if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'❤')
+			{
+				health_player_2 += 5;
+				ghalb = 0;
+				map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'❤';
+				player2_pos = moveDirection(player2_pos, 1, 0);
+			}
+			else
+				player2_pos = moveDirection(player2_pos, 1, 0);
+		}
+		if (keyPressed(PLAYER2_SHOOT)) {
+			if (up_2 == 1) {
+				player2_bullet = moveDirection(player2_pos, 0, -1);
+				U2 = 1; D2 = 0; L2 = 0; R2 = 0;
+			}
+			else if (down_2 == 1) {
+				player2_bullet = moveDirection(player2_pos, 0, 1);
+				D2 = 1; U2 = 0; L2 = 0; R2 = 0;
+			}
+			else if (left_2 == 1) {
+				player2_bullet = moveDirection(player2_pos, -1, 0);
+				L2 = 1; U2 = 0; D2 = 0; R2 = 0;
+			}
+			else if (right_2 == 1) {
+				player2_bullet = moveDirection(player2_pos, -1, 0);
+				R2 = 1; U2 = 0; D2 = 0; L2 = 0;
+			}
+		}
+
+		int score_move = 0;
+		score_move += (up + down + left + right);
+		// Update bullet positions
+		if (player1_bullet.X != -1) {
+			if (U == 1 && map[moveDirection(player1_bullet, 0, -1).Y][moveDirection(player1_bullet, 0, -1).X] != L'█') {
+				player1_bullet.Y--;
+				if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X)
+					health_player_2--;
+				if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+					U = 0; D = 1;
+					player1_bullet.Y += 2;
+				}
+			}
+			else if (D == 1 && map[moveDirection(player1_bullet, 0, 1).Y][moveDirection(player1_bullet, 0, 1).X] != L'█')
+			{
+				player1_bullet.Y++;
+				if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X)
+					health_player_2--;
+				if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+					U = 1; D = 0;
+					player1_bullet.Y -= 2;
+				}
+			}
+			else if (R == 1 && map[moveDirection(player1_bullet, 1, 0).Y][moveDirection(player1_bullet, 1, 0).X] != L'█')
+			{
+				player1_bullet.X++;
+				if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X)
+					health_player_2--;
+				if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+					R = 0; L = 1;
+					player1_bullet.X -= 2;
+				}
+			}
+			else if (L == 1 && map[moveDirection(player1_bullet, -1, 0).Y][moveDirection(player1_bullet, -1, 0).X] != L'█')
+			{
+				player1_bullet.X--;
+				if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X)
+					health_player_2--;
+				if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+					R = 1; L = 0;
+					player1_bullet.X += 2;
+				}
+			}
+			else {
+				player1_bullet.X = -1;
+			}
+
+		}
+		if (player2_bullet.X != -1) {
+			if (U2 == 1 && map[moveDirection(player2_bullet, 0, -1).Y][moveDirection(player2_bullet, 0, -1).X] != L'█') {
+				player2_bullet.Y--;
+				if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X)
+					health_player_1--;
+				if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+					U2 = 0; D2 = 1;
+					player2_bullet.Y += 2;
+				}
+			}
+			else if (D2 == 1 && map[moveDirection(player2_bullet, 0, 1).Y][moveDirection(player2_bullet, 0, 1).X] != L'█')
+			{
+				player2_bullet.Y++;
+				if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X)
+					health_player_1--;
+				if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+					U2 = 1; D2 = 0;
+					player2_bullet.Y -= 2;
+				}
+			}
+
+			else if (R2 == 1 && map[moveDirection(player2_bullet, 1, 0).Y][moveDirection(player2_bullet, 1, 0).X] != L'█')
+			{
+				player2_bullet.X++;
+				if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X)
+					health_player_1--;
+				if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+					R2 = 0; L2 = 1;
+					player2_bullet.X -= 2;
+				}
+
+			}
+			else if (L2 == 1 && map[moveDirection(player2_bullet, -1, 0).Y][moveDirection(player2_bullet, -1, 0).X] != L'█')
+			{
+				player2_bullet.X--;
+				if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X)
+					health_player_1--;
+				if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+					R2 = 1; L2 = 0;
+					player2_bullet.X += 2;
+				}
+			}
+			else {
+				player2_bullet.X = -1;
+			}
+		}
+
+		// Draw map
+		SetConsoleOutputCP(65001);
+		_setmode(_fileno(stdout), _O_U16TEXT);
+		shape_Map(map);
+		// Draw players
+		map[player1_pos.Y][player1_pos.X] = '1';
+		map[player2_pos.Y][player2_pos.X] = '2';
+
+		// Draw bullets
+		if (player1_bullet.X < 112 && player1_bullet.X != -1) map[player1_bullet.Y][player1_bullet.X] = '.';
+		if (player2_bullet.X < 112 && player2_bullet.X != -1) map[player2_bullet.Y][player2_bullet.X] = '.';
+
+		// Output to console
+		for (int y = 0; y < 24; y++) {
+			COORD place;
+			place.X = 0;
+			place.Y = y;
+			WriteConsoleOutputCharacterW(hStdout, map[y], 112, place, &bytes_written);
+			//WriteConsoleOutputCharacterA is a function in the Windows Console API that writes a string of characters to a console screen buffer at a specified location.
+			//The first parameter identifies where to write the characters
+			//The second parameter is a C-style string or an array of characters that you want to write to the screen buffer.
+			//The third parameter specifies how many characters from the string should be written to the screen buffer.
+			//The fourth parameter specifies the coordinates (given as a COORD structure) of the first cell in the console screen buffer where writing will begin.
+			//The fifth parameter is a pointer to a variable that receives the number of characters actually written to the console screen buffer.
+
+		}
+
+		_setmode(_fileno(stdout), _O_TEXT);
+		printf("\n1:%d,2:%d", health_player_1, health_player_2);
+		// Game tick delay
+		Sleep(100);
+	}
+
+}
 
 
 
