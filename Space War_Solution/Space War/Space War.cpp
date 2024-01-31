@@ -14,8 +14,9 @@ struct profile {
 	char Password[40];
 	char email[40];
 };
+void game_play_map_2();
 void game_play_map_1();
-void shape_Map(wchar_t map[24][112]);
+void shape_Map(wchar_t map[24][112],bool ghalb);
 void signin_player2(int loc_player_1);
 void change_email(int loc, char * username);
 void Change_Username(int loc);
@@ -840,7 +841,7 @@ void signin_player2(int loc_player_1) {
 
 }
 
-void shape_Map(wchar_t map[24][112]) {
+void shape_Map(wchar_t map[24][112], bool ghalb) {
 
 	SetConsoleOutputCP(65001);
 	_setmode(_fileno(stdout), _O_U16TEXT);
@@ -934,7 +935,7 @@ void shape_Map(wchar_t map[24][112]) {
 	int m = 0;
 	for (int i = 0; i < 24; i++) {
 		for (int j = 0; j < 112; j++) {
-			if (i == 4 && j == 55) {
+			if (i == 4 && j == 55 && ghalb==1) {
 				map[i][j] = L'❤';
 				wprintf(L"%wc", map[i][j]);
 			}
@@ -1154,7 +1155,7 @@ void game_play_map_1() {
 	int U = 0, D = 0, L = 0, R = 0;
 	int U2 = 0, D2 = 0, L2 = 0, R2 = 0;
 	hidecursor();
-	while (1) {
+	while (health_player_1>0 && health_player_2>0) {
 		// Clear screen
 		system("cls");
 
@@ -1494,7 +1495,7 @@ void game_play_map_1() {
 		// Draw map
 		SetConsoleOutputCP(65001);
 		_setmode(_fileno(stdout), _O_U16TEXT);
-		shape_Map(map);
+		shape_Map(map,ghalb);
 		// Draw players
 		map[player1_pos.Y][player1_pos.X] = '1';
 		map[player2_pos.Y][player2_pos.X] = '2';
@@ -1523,8 +1524,1220 @@ void game_play_map_1() {
 		// Game tick delay
 		Sleep(100);
 	}
+	game_play_map_2();
 
 }
+
+void game_play_map_2() {
+	int up = 0, down = 0, right = 0, left = 0;
+	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
+	int health_player_1 = 5;
+	int health_player_2 = 5;
+	bool ghalb = 1;
+
+
+	wchar_t map[24][112];
+
+	COORD player1_pos = { 10, 10 };
+	COORD player2_pos = { 100, 10 };
+	COORD saved_player1_pos = { 0,0 };
+	COORD player1_bullet = { -1, -1 };
+	COORD player2_bullet = { -1, -1 };
+
+	//DWORD stands for “Double Word” and is used to represent 32-bit unsigned integers
+	DWORD bytes_written;
+	HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+	int U = 0, D = 0, L = 0, R = 0;
+	int U2 = 0, D2 = 0, L2 = 0, R2 = 0;
+	int score_bullet_player_1 = 0;
+	int score_bullet_player_2 = 0;
+
+	int saved_2 = 0;
+	int saved_1 = 0;
+
+	bool upgrade_bullets_1 = 0;
+	bool upgrade_bullets_2 = 0;
+
+	bool ghost_player_1 = 0;
+	bool ghost_player_2 = 0;
+
+	bool pos_ghost_player = 0;
+
+	int move_ghost_player_1 = 0;
+	int move_ghost_player_2 = 0;
+
+	int score_move_1 = 0;
+	int score_move_2 = 0;
+
+
+	bool pos_upgrade_bullets_R = 0;
+	bool pos_upgrade_bullets_L = 0;
+
+	bool frag_player_1 = 0;
+	bool frag_player_2 = 0;
+
+	bool pos_frag_player = 0;
+
+	int  wall_x = 0;
+	int  wall_y = 0;
+	int saved_frag_1 = 0;
+	int saved_frag_2 = 0;
+	hidecursor();
+	while (1) {
+		// Clear screen
+		system("cls");
+
+		//ghost being
+		if (move_ghost_player_1 + 7 == score_move_1) ghost_player_1 = 0;
+		if (move_ghost_player_2 + 7 == score_move_2) ghost_player_2 = 0;
+		// Input handling for Player 1
+		if (keyPressed(PLAYER1_UP) && map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] != L'║') {
+			score_move_1++;
+			up = 1; down = 0; right = 0; left = 0;
+			if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] != L'█' || ghost_player_1 == 1)
+			{
+
+				if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] == L'෧') {
+					health_player_1--;
+					player1_pos = { 10 , 10 };
+				}
+				else if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] == L'֍') {
+					if (moveDirection(player1_pos, 0, -1).X == 104)
+						player1_pos = { 9,19 };
+					else
+						player1_pos = { 104,19 };
+				}
+				else if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] == L'❤') {
+					health_player_1 += 5;
+					ghalb = 0;
+					map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] = L' ';
+					player1_pos = moveDirection(player1_pos, 0, -1);
+
+				}
+				else if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] == L'✶') {
+					upgrade_bullets_1 = 1;
+					saved_1 = score_bullet_player_1;
+					if (moveDirection(player1_pos, 0, -1).X == 25)
+						pos_upgrade_bullets_L = 1;
+
+					else
+						pos_upgrade_bullets_R = 1;
+
+					player1_pos = moveDirection(player1_pos, 0, -1);
+				}
+				else if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] == L'ѽ')
+				{
+					ghost_player_1 = 1;
+					pos_ghost_player = 1;
+					move_ghost_player_1 = score_move_1;
+					player1_pos = moveDirection(player1_pos, 0, -1);
+				}
+				else if (map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] == L'Ơ') {
+					frag_player_1 = 1;
+					saved_frag_1 = score_bullet_player_1;
+					pos_frag_player = 1;
+					player1_pos = moveDirection(player1_pos, 0, -1);
+				}
+
+				else
+					player1_pos = moveDirection(player1_pos, 0, -1);
+			}
+		}
+		if (keyPressed(PLAYER1_DOWN) && map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] != L'║') {
+			down = 1; up = 0; right = 0; left = 0; score_move_1++;
+			if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] != L'█' || ghost_player_1 == 1)
+			{
+				if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] == L'෧')
+				{
+					health_player_1--;
+					player1_pos = { 10 , 10 };
+				}
+
+				else if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] == L'֍') {
+					if (moveDirection(player1_pos, 0, 1).X == 104)
+						player1_pos = { 9,19 };
+					else
+						player1_pos = { 104,19 };
+				}
+				else if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] == L'❤')
+				{
+					health_player_1 += 5;
+					ghalb = 0;
+					map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] = L' ';
+					player1_pos = moveDirection(player1_pos, 0, 1);
+				}
+				else if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] == L'✶') {
+					upgrade_bullets_1 = 1;
+					saved_1 = score_bullet_player_1;
+					if (moveDirection(player1_pos, 0, 1).X == 25)
+						pos_upgrade_bullets_L = 1;
+
+					else
+						pos_upgrade_bullets_R = 1;
+					player1_pos = moveDirection(player1_pos, 0, 1);
+				}
+
+				else if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] == L'ѽ')
+				{
+
+					ghost_player_1 = 1;
+					move_ghost_player_1 = score_move_1;
+					pos_ghost_player = 1;
+					player1_pos = moveDirection(player1_pos, 0, 1);
+
+				}
+				else if (map[moveDirection(player1_pos, 0, 1).Y][moveDirection(player1_pos, 0, 1).X] == L'Ơ') {
+					frag_player_1 = 1;
+					pos_frag_player = 1;
+					saved_frag_1 = score_bullet_player_1;
+					player1_pos = moveDirection(player1_pos, 0, 1);
+				}
+				else
+					player1_pos = moveDirection(player1_pos, 0, 1);
+			}
+		}
+		if (keyPressed(PLAYER1_LEFT) && map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] != L'║') {
+			left = 1; up = 0; down = 0; right = 0; score_move_1++;
+			if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] != L'█' || ghost_player_1 == 1)
+			{
+				if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] == L'෧') {
+					health_player_1--;
+					player1_pos = { 10 , 10 };
+				}
+				else if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] == L'֍') {
+					if (moveDirection(player1_pos, -1, 0).X == 104)
+						player1_pos = { 9,19 };
+					else
+						player1_pos = { 104,19 };
+				}
+				else if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] == L'❤')
+				{
+					health_player_1 += 5;
+					ghalb = 0;
+					map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] = L' ';
+					player1_pos = moveDirection(player1_pos, -1, 0);
+				}
+
+				else if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] == L'✶') {
+					upgrade_bullets_1 = 1;
+					saved_1 = score_bullet_player_1;
+					if (moveDirection(player1_pos, -1, 0).X == 25)
+						pos_upgrade_bullets_L = 1;
+
+					else
+						pos_upgrade_bullets_R = 1;
+					player1_pos = moveDirection(player1_pos, -1, 0);
+				}
+
+				else if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] == L'ѽ')
+				{
+					move_ghost_player_1 = score_move_1;
+					ghost_player_1 = 1;
+					pos_ghost_player = 1;
+					player1_pos = moveDirection(player1_pos, -1, 0);
+				}
+				else if (map[moveDirection(player1_pos, -1, 0).Y][moveDirection(player1_pos, -1, 0).X] == L'Ơ') {
+					frag_player_1 = 1;
+					saved_frag_1 = score_bullet_player_1;
+					pos_frag_player = 1;
+					player1_pos = moveDirection(player1_pos, -1, 0);
+				}
+				else
+					player1_pos = moveDirection(player1_pos, -1, 0);
+
+			}
+		}
+		if (keyPressed(PLAYER1_RIGHT) && map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] != L'║')
+		{
+			score_move_1++;
+			right = 1; up = 0; down = 0; left = 0;
+			if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] != L'█' || ghost_player_1 == 1)
+			{
+				if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] == L'෧') {
+					health_player_1--;
+					player1_pos = { 10 , 10 };
+				}
+				else if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] == L'֍') {
+					if (moveDirection(player1_pos, 1, 0).X == 104)
+						player1_pos = { 9,19 };
+					else
+						player1_pos = { 104,19 };
+				}
+				else if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] == L'❤')
+				{
+					health_player_1 += 5;
+					ghalb = 0;
+					map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] = L' ';
+					player1_pos = moveDirection(player1_pos, 1, 0);
+				}
+
+				else if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] == L'✶') {
+					upgrade_bullets_1 = 1;
+					saved_1 = score_bullet_player_1;
+					if (moveDirection(player1_pos, 1, 0).X == 25)
+						pos_upgrade_bullets_L = 1;
+
+					else
+						pos_upgrade_bullets_R = 1;
+
+					player1_pos = moveDirection(player1_pos, 1, 0);
+				}
+				else if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] == L'ѽ')
+				{
+					move_ghost_player_1 = score_move_1;
+					ghost_player_1 = 1;
+					pos_ghost_player = 1;
+					player1_pos = moveDirection(player1_pos, 1, 0);
+				}
+				else if (map[moveDirection(player1_pos, 1, 0).Y][moveDirection(player1_pos, 1, 0).X] == L'Ơ') {
+					frag_player_1 = 1;
+					pos_frag_player = 1;
+					saved_frag_1 = score_bullet_player_1;
+					player1_pos = moveDirection(player1_pos, 1, 0);
+				}
+
+				else
+					player1_pos = moveDirection(player1_pos, 1, 0);
+			}
+
+		}
+		if (keyPressed(PLAYER1_SHOOT)) {
+			score_bullet_player_1++;
+			score_move_1++;
+			if (up == 1) {
+				player1_bullet = player1_pos;
+				U = 1; D = 0; L = 0; R = 0;
+			}
+			else if (down == 1) {
+				player1_bullet = player1_pos;
+				D = 1; U = 0; L = 0; R = 0;
+			}
+			else if (left == 1) {
+				player1_bullet = player1_pos;
+				L = 1; U = 0; D = 0; R = 0;
+			}
+			else if (right == 1) {
+				player1_bullet = player1_pos;
+				R = 1; U = 0; D = 0; L = 0;
+			}
+
+		}
+
+		// Input handling for Player 2
+		if (keyPressed(PLAYER2_UP) && map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] != L'║') {
+			score_move_2++;
+			up_2 = 1; down_2 = 0; right_2 = 0; left_2 = 0;
+			if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] != L'█' || ghost_player_1 == 2)
+			{
+				if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'෧') {
+					health_player_2--;
+					player2_pos = { 100 , 10 };
+				}
+				else if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'֍') {
+					if (moveDirection(player2_pos, 0, -1).X == 104)
+						player2_pos = { 9,19 };
+					else
+						player2_pos = { 104,19 };
+				}
+				else if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'❤')
+				{
+					health_player_2 += 5;
+					ghalb = 0;
+					map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'❤';
+					player2_pos = moveDirection(player2_pos, 0, -1);
+				}
+				else if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'✶') {
+					upgrade_bullets_2 = 1;
+					saved_2 = score_bullet_player_2;
+					if (moveDirection(player2_pos, 0, -1).X == 25)
+						pos_upgrade_bullets_L = 1;
+
+					else
+						pos_upgrade_bullets_R = 1;
+
+					player2_pos = moveDirection(player2_pos, 0, -1);
+				}
+				else if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'ѽ')
+				{
+					move_ghost_player_2 = score_move_2;
+					ghost_player_2 = 1;
+					pos_ghost_player = 1;
+					player2_pos = moveDirection(player2_pos, 0, -1);
+				}
+				else if (map[moveDirection(player2_pos, 0, -1).Y][moveDirection(player2_pos, 0, -1).X] == L'Ơ') {
+					frag_player_2 = 1;
+					pos_frag_player = 1;
+					saved_frag_2 = score_bullet_player_2;
+					player2_pos = moveDirection(player2_pos, 0, -1);
+				}
+
+				else
+					player2_pos = moveDirection(player2_pos, 0, -1);
+			}
+		}
+		if (keyPressed(PLAYER2_DOWN) && map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] != L'║')
+		{
+			score_move_2++;
+			up_2 = 0; down_2 = 1; right_2 = 0; left_2 = 0;
+			if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] != L'█' || ghost_player_2 == 1)
+			{
+				if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'෧') {
+					health_player_2--;
+					player2_pos = { 100 , 10 };
+				}
+				else if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'֍') {
+					if (moveDirection(player2_pos, 0, 1).X == 104)
+						player2_pos = { 9,19 };
+					else
+						player2_pos = { 104,19 };
+				}
+				else if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'❤')
+				{
+					health_player_2 += 5;
+					ghalb = 0;
+					map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'❤';
+					player2_pos = moveDirection(player2_pos, 0, 1);
+				}
+
+				else if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'✶') {
+					upgrade_bullets_2 = 1;
+					saved_2 = score_bullet_player_2;
+					if (moveDirection(player2_pos, 0, 1).X == 25)
+						pos_upgrade_bullets_L = 1;
+
+					else
+						pos_upgrade_bullets_R = 1;
+
+					player2_pos = moveDirection(player2_pos, 0, 1);
+				}
+
+				else if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'ѽ')
+				{
+					move_ghost_player_2 = score_move_2;
+					ghost_player_2 = 1;
+					pos_ghost_player = 1;
+					player2_pos = moveDirection(player2_pos, 0, 1);
+				}
+				else if (map[moveDirection(player2_pos, 0, 1).Y][moveDirection(player2_pos, 0, 1).X] == L'Ơ') {
+					frag_player_2 = 1;
+					pos_frag_player = 1;
+					saved_frag_2 = score_bullet_player_2;
+					player2_pos = moveDirection(player2_pos, 0, 1);
+				}
+				else
+					player2_pos = moveDirection(player2_pos, 0, 1);
+			}
+		}
+		if (keyPressed(PLAYER2_LEFT) && map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] != L'║')
+		{
+			score_move_2++;
+			up_2 = 0; down_2 = 0; right_2 = 0; left_2 = 1;
+			if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] != L'█' || ghost_player_2 == 1)
+			{
+				if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'෧') {
+					health_player_2--;
+					player2_pos = { 100 , 10 };
+				}
+				else if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'֍') {
+					if (moveDirection(player2_pos, -1, 0).X == 104)
+						player2_pos = { 9,19 };
+					else
+						player2_pos = { 104,19 };
+				}
+				else if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'❤')
+				{
+					health_player_2 += 5;
+					ghalb = 0;
+					map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'❤';
+					player2_pos = moveDirection(player2_pos, -1, 0);
+				}
+				else if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'✶') {
+					upgrade_bullets_2 = 1;
+					saved_2 = score_bullet_player_2;
+					if (moveDirection(player2_pos, -1, 0).X == 25)
+						pos_upgrade_bullets_L = 1;
+					else
+						pos_upgrade_bullets_R = 1;
+					player2_pos = moveDirection(player2_pos, -1, 0);
+				}
+
+				else if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'ѽ')
+				{
+					move_ghost_player_2 = score_move_2;
+					ghost_player_2 = 1;
+					pos_ghost_player = 1;
+					player2_pos = moveDirection(player2_pos, -1, 0);
+				}
+				else if (map[moveDirection(player2_pos, -1, 0).Y][moveDirection(player2_pos, -1, 0).X] == L'Ơ') {
+					frag_player_2 = 1;
+					pos_frag_player = 1;
+					saved_frag_2 = score_bullet_player_2;
+					player2_pos = moveDirection(player2_pos, -1, 0);
+				}
+
+				else
+					player2_pos = moveDirection(player2_pos, -1, 0);
+			}
+		}
+		if (keyPressed(PLAYER2_RIGHT) && map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] != L'║')
+		{
+			score_move_2++;
+			up_2 = 0; down_2 = 0; right_2 = 1; left_2 = 0;
+			if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] != L'█' || ghost_player_2 == 1)
+			{
+				if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'෧') {
+					health_player_2--;
+					player2_pos = { 100 , 10 };
+				}
+				else if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'֍') {
+					if (moveDirection(player2_pos, 1, 0).X == 104)
+						player2_pos = { 9,19 };
+					else
+						player2_pos = { 104,19 };
+				}
+				else if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'❤')
+				{
+					health_player_2 += 5;
+					ghalb = 0;
+					map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'❤';
+					player2_pos = moveDirection(player2_pos, 1, 0);
+				}
+				else if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'✶') {
+					upgrade_bullets_2 = 1;
+					saved_2 = score_bullet_player_2;
+					if (moveDirection(player2_pos, 1, 0).X == 25)
+						pos_upgrade_bullets_L = 1;
+					else
+						pos_upgrade_bullets_R = 1;
+
+					player2_pos = moveDirection(player2_pos, 1, 0);
+				}
+
+				else if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'ѽ')
+				{
+					move_ghost_player_2 = score_move_2;
+					ghost_player_2 = 1;
+					pos_ghost_player = 1;
+					player2_pos = moveDirection(player2_pos, 1, 0);
+				}
+				else if (map[moveDirection(player2_pos, 1, 0).Y][moveDirection(player2_pos, 1, 0).X] == L'Ơ') {
+					frag_player_2 = 1;
+					saved_frag_2 = score_bullet_player_2;
+					pos_frag_player = 1;
+					player2_pos = moveDirection(player2_pos, 1, 0);
+				}
+
+
+				else
+					player2_pos = moveDirection(player2_pos, 1, 0);
+			}
+		}
+		if (keyPressed(PLAYER2_SHOOT)) {
+			score_move_2++;
+			score_bullet_player_2++;
+			if (up_2 == 1) {
+				player2_bullet = player2_pos;
+				U2 = 1; D2 = 0; L2 = 0; R2 = 0;
+			}
+			else if (down_2 == 1) {
+				player2_bullet = player2_pos;
+				D2 = 1; U2 = 0; L2 = 0; R2 = 0;
+			}
+			else if (left_2 == 1) {
+				player2_bullet = player2_pos;
+				L2 = 1; U2 = 0; D2 = 0; R2 = 0;
+			}
+			else if (right_2 == 1) {
+				player2_bullet = player2_pos;
+				R2 = 1; U2 = 0; D2 = 0; L2 = 0;
+			}
+		}
+		// frag
+			if (saved_frag_1 + 2 == score_bullet_player_1)frag_player_1 = 0;
+			if (saved_frag_2 + 2 == score_bullet_player_2)frag_player_2 = 0;
+
+			//upgrade bullet
+		if (saved_1 + 6 == score_bullet_player_1) {
+			upgrade_bullets_1 = 0;
+		}
+		if (saved_2 + 6 == score_bullet_player_2) {
+			upgrade_bullets_2 = 0;
+		}
+		/////
+
+		// Update bullet positions
+		if (player1_bullet.X != -1) {
+			if (frag_player_1 == 0)
+			{
+
+				if (U == 1) {
+					if (map[moveDirection(player1_bullet, 0, -1).Y][moveDirection(player1_bullet, 0, -1).X] != L'█' || ghost_player_1 == 1)
+					{
+						player1_bullet.Y--;
+						if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 0)
+							health_player_2--;
+
+						else if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 1)
+							health_player_2 -= 2;
+
+						if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+							U = 0; D = 1;
+							player1_bullet.Y += 2;
+						}
+					}
+					else {
+						player1_bullet.X = -1;
+					}
+				}
+				else if (D == 1)
+				{
+					if (map[moveDirection(player1_bullet, 0, 1).Y][moveDirection(player1_bullet, 0, 1).X] != L'█' || ghost_player_1 == 1)
+					{
+						if (map[moveDirection(player1_bullet, 0, 1).Y][moveDirection(player1_bullet, 0, 1).X] != L'█' || ghost_player_1 == 1)
+						{
+							player1_bullet.Y++;
+							if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 0)
+								health_player_2--;
+
+							else if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 1)
+								health_player_2 -= 2;
+
+							if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+								U = 1; D = 0;
+								player1_bullet.Y -= 2;
+							}
+
+						}
+					}
+					else {
+						player1_bullet.X = -1;
+					}
+
+				}
+				else if (R == 1)
+				{
+					if (map[moveDirection(player1_bullet, 1, 0).Y][moveDirection(player1_bullet, 1, 0).X] != L'█' || ghost_player_1 == 1)
+					{
+						player1_bullet.X++;
+
+						if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 0)
+							health_player_2--;
+
+						else if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 1)
+							health_player_2 -= 2;
+
+						if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+							R = 0; L = 1;
+							player1_bullet.X -= 2;
+						}
+					}
+					else {
+						player1_bullet.X = -1;
+					}
+
+				}
+				else if (L == 1)
+				{
+					if (map[moveDirection(player1_bullet, -1, 0).Y][moveDirection(player1_bullet, -1, 0).X] != L'█' || ghost_player_1 == 1)
+					{
+						player1_bullet.X--;
+						if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 0)
+							health_player_2--;
+
+						else if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 1)
+							health_player_2 -= 2;
+
+						if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+							R = 1; L = 0;
+							player1_bullet.X += 2;
+						}
+					}
+					else {
+						player1_bullet.X = -1;
+					}
+				}
+				else {
+					player1_bullet.X = -1;
+				}
+
+			}
+			else {
+				if (U == 1) {
+					if (map[moveDirection(player1_bullet, 0, -1).Y][moveDirection(player1_bullet, 0, -1).X] != L'█')
+					{
+						player1_bullet.Y--;
+						if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 0)
+							health_player_2 -= 5;
+
+						else if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 1)
+							health_player_2 -= 5;
+
+						if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+							wall_x = player1_bullet.X;
+							wall_y = player1_bullet.Y;
+							if (player1_pos.X <= player1_bullet.X + 1 && player1_pos.X >= player1_bullet.X - 1 && player1_pos.Y <= player1_bullet.Y + 1 && player1_pos.Y >= player1_bullet.Y - 1) {
+								health_player_1--;
+							}
+							if (player2_pos.X <= player1_bullet.X + 1 && player2_pos.X >= player1_bullet.X - 1 && player2_pos.Y <= player1_bullet.Y + 1 && player2_pos.Y >= player1_bullet.Y - 1) {
+								health_player_2--;
+							}
+							player1_bullet.X = -1;
+						}
+					}
+					else {
+						if (player2_pos.X <= player1_bullet.X + 2 && player2_pos.X >= player1_bullet.X - 2 && player2_pos.Y <= player1_bullet.Y + 2 && player2_pos.Y >= player1_bullet.Y - 2) {
+							health_player_2--;
+						}
+						player1_bullet.X = -1;
+					}
+				}
+				else if (D == 1)
+				{
+					if (map[moveDirection(player1_bullet, 0, 1).Y][moveDirection(player1_bullet, 0, 1).X] != L'█')
+					{
+						player1_bullet.Y++;
+						if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 0)
+							health_player_2 -= 1;
+
+						else if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 1)
+							health_player_2 -= 5;
+
+						if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+							wall_x = player1_bullet.X;
+							wall_y = player1_bullet.Y;
+							if (player1_pos.X <= player1_bullet.X + 1 && player1_pos.X >= player1_bullet.X - 1 && player1_pos.Y <= player1_bullet.Y + 1 && player1_pos.Y >= player1_bullet.Y - 1) {
+								health_player_1--;
+							}
+							if (player2_pos.X <= player1_bullet.X + 1 && player2_pos.X >= player1_bullet.X - 1 && player2_pos.Y <= player1_bullet.Y + 1 && player2_pos.Y >= player1_bullet.Y - 1) {
+								health_player_2--;
+							}
+							player1_bullet.X = -1;
+						}
+					}
+					else {
+						if (player2_pos.X <= player1_bullet.X + 2 && player2_pos.X >= player1_bullet.X - 2 && player2_pos.Y <= player1_bullet.Y + 2 && player2_pos.Y >= player1_bullet.Y - 2) {
+							health_player_2--;
+						}
+						player1_bullet.X = -1;
+					}
+				}
+				else if (R == 1)
+				{
+					if (map[moveDirection(player1_bullet, 1, 0).Y][moveDirection(player1_bullet, 1, 0).X] != L'█')
+					{
+						player1_bullet.X++;
+						if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 0)
+							health_player_2 -= 1;
+
+						else if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 1)
+							health_player_2 -= 5;
+
+						if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+							wall_x = player1_bullet.X;
+							wall_y = player1_bullet.Y;
+							if (player1_pos.X <= player1_bullet.X + 1 && player1_pos.X >= player1_bullet.X - 1 && player1_pos.Y <= player1_bullet.Y + 1 && player1_pos.Y >= player1_bullet.Y - 1) {
+								health_player_1--;
+							}
+							if (player2_pos.X <= player1_bullet.X + 1 && player2_pos.X >= player1_bullet.X - 1 && player2_pos.Y <= player1_bullet.Y + 1 && player2_pos.Y >= player1_bullet.Y - 1) {
+								health_player_2--;
+							}
+							player1_bullet.X = -1;
+						}
+					}
+					else {
+						if (player2_pos.X <= player1_bullet.X + 2 && player2_pos.X >= player1_bullet.X - 2 && player2_pos.Y <= player1_bullet.Y + 2 && player2_pos.Y >= player1_bullet.Y - 2) {
+							health_player_2--;
+						}
+						player1_bullet.X = -1;
+					}
+
+				}
+				else if (L == 1)
+				{
+					if (map[moveDirection(player1_bullet, -1, 0).Y][moveDirection(player1_bullet, -1, 0).X] != L'█')
+					{
+						player1_bullet.X--;
+						if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 0)
+							health_player_2 -= 1;
+
+						else if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 1)
+							health_player_2 -= 5;
+
+						if (map[player1_bullet.Y][player1_bullet.X] == L'║') {
+							wall_x = player1_bullet.X;
+							wall_y = player1_bullet.Y;
+							if (player1_pos.X <= player1_bullet.X + 1 && player1_pos.X >= player1_bullet.X - 1 && player1_pos.Y <= player1_bullet.Y + 1 && player1_pos.Y >= player1_bullet.Y - 1) {
+								health_player_1--;
+							}
+							if (player2_pos.X <= player1_bullet.X + 1 && player2_pos.X >= player1_bullet.X - 1 && player2_pos.Y <= player1_bullet.Y + 1 && player2_pos.Y >= player1_bullet.Y - 1) {
+								health_player_2--;
+							}
+							player1_bullet.X = -1;
+						}
+					}
+					else {
+						if (player2_pos.X <= player1_bullet.X + 2 && player2_pos.X >= player1_bullet.X - 2 && player2_pos.Y <= player1_bullet.Y + 2 && player2_pos.Y >= player1_bullet.Y - 2) {
+							health_player_2--;
+						}
+						player1_bullet.X = -1;
+					}
+				}
+				else {
+					if (player2_pos.X <= player1_bullet.X + 2 && player2_pos.X >= player1_bullet.X - 2 && player2_pos.Y <= player1_bullet.Y + 2 && player2_pos.Y >= player1_bullet.Y - 2) {
+						health_player_2--;
+					}
+					player1_bullet.X = -1;
+				}
+			}
+		}
+		if (player2_bullet.X != -1) {
+			if (frag_player_2 == 0)
+			{
+				if (U2 == 1) {
+					if (map[moveDirection(player2_bullet, 0, -1).Y][moveDirection(player2_bullet, 0, -1).X] != L'█' || ghost_player_2 == 1)
+					{
+						player2_bullet.Y--;
+
+						if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 0)
+							health_player_1--;
+						else if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 1)
+							health_player_1 -= 2;
+
+						if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+							U2 = 0; D2 = 1;
+							player2_bullet.Y += 2;
+						}
+					}
+					else {
+						player2_bullet.X = -1;
+					}
+				}
+				else if (D2 == 1)
+				{
+					if (map[moveDirection(player2_bullet, 0, 1).Y][moveDirection(player2_bullet, 0, 1).X] != L'█' || ghost_player_2 == 1)
+					{
+						player2_bullet.Y++;
+						if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 0)
+							health_player_1--;
+						else if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 1)
+							health_player_1 -= 2;
+						if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+							U2 = 0; D2 = 1;
+							player2_bullet.Y += 2;
+						}
+					}
+					else {
+						player2_bullet.X = -1;
+					}
+				}
+				else if (R2 == 1)
+				{
+					if (map[moveDirection(player2_bullet, 1, 0).Y][moveDirection(player2_bullet, 1, 0).X] != L'█' || ghost_player_2 == 1)
+					{
+						player2_bullet.X++;
+						if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 0)
+							health_player_1--;
+						else if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 1)
+							health_player_1 -= 2;
+						if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+							R2 = 0; L2 = 1;
+							player2_bullet.X -= 2;
+						}
+
+					}
+					else {
+						player2_bullet.X = -1;
+					}
+				}
+				else if (L2 == 1)
+				{
+					if (map[moveDirection(player2_bullet, -1, 0).Y][moveDirection(player2_bullet, -1, 0).X] != L'█' || ghost_player_2 == 1)
+					{
+						player2_bullet.X--;
+						if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 0)
+							health_player_1--;
+						else if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 1)
+							health_player_1 -= 2;
+						if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+							R2 = 1; L2 = 0;
+							player2_bullet.X += 2;
+						}
+
+					}
+					else {
+						player2_bullet.X = -1;
+					}
+				}
+				else {
+					player2_bullet.X = -1;
+				}
+
+			}
+
+
+			else {
+				if (U2 == 1) {
+					if (map[moveDirection(player2_bullet, 0, -1).Y][moveDirection(player2_bullet, 0, -1).X] != L'█')
+					{
+						player2_bullet.Y--;
+						if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 0)
+							health_player_1 -= 1;
+
+						else if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 1)
+							health_player_1 -= 5;
+
+						if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+							wall_x = player2_bullet.X;
+							wall_y = player2_bullet.Y;
+							if (player2_pos.X <= player2_bullet.X + 1 && player2_pos.X >= player2_bullet.X - 1 && player2_pos.Y <= player2_bullet.Y + 1 && player2_pos.Y >= player2_bullet.Y - 1) {
+								health_player_2--;
+							}
+							if (player1_pos.X <= player2_bullet.X + 1 && player1_pos.X >= player2_bullet.X - 1 && player1_pos.Y <= player2_bullet.Y + 1 && player1_pos.Y >= player2_bullet.Y - 1) {
+								health_player_1--;
+							}
+							player2_bullet.X = -1;
+						}
+					}
+					else {
+						if (player1_pos.X <= player2_bullet.X + 2 && player1_pos.X >= player2_bullet.X - 2 && player1_pos.Y <= player2_bullet.Y + 2 && player1_pos.Y >= player2_bullet.Y - 2) {
+							health_player_1--;
+						}
+						player2_bullet.X = -1;
+					}
+				}
+				else if (D2 == 1)
+				{
+					if (map[moveDirection(player2_bullet, 0, 1).Y][moveDirection(player2_bullet, 0, 1).X] != L'█')
+					{
+						player2_bullet.Y++;
+						if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 0)
+							health_player_1 -= 1;
+
+						else if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 1)
+							health_player_1 -= 5;
+
+						if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+							wall_x = player2_bullet.X;
+							wall_y = player2_bullet.Y;
+							if (player2_pos.X <= player2_bullet.X + 1 && player2_pos.X >= player2_bullet.X - 1 && player2_pos.Y <= player2_bullet.Y + 1 && player2_pos.Y >= player2_bullet.Y - 1) {
+								health_player_2--;
+							}
+							if (player1_pos.X <= player2_bullet.X + 1 && player1_pos.X >= player2_bullet.X - 1 && player1_pos.Y <= player2_bullet.Y + 1 && player1_pos.Y >= player2_bullet.Y - 1) {
+								health_player_1--;
+							}
+							player2_bullet.X = -1;
+						}
+					}
+					else {
+						if (player1_pos.X <= player2_bullet.X + 2 && player1_pos.X >= player2_bullet.X - 2 && player1_pos.Y <= player2_bullet.Y + 2 && player1_pos.Y >= player2_bullet.Y - 2) {
+							health_player_1--;
+						}
+						player2_bullet.X = -1;
+					}
+				}
+				else if (R2 == 1)
+				{
+					if (map[moveDirection(player2_bullet, 1, 0).Y][moveDirection(player2_bullet, 1, 0).X] != L'█')
+					{
+						player2_bullet.X++;
+						if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 0)
+							health_player_1 -= 1;
+
+						else if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 1)
+							health_player_1 -= 5;
+
+						if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+							wall_x = player2_bullet.X;
+							wall_y = player2_bullet.Y;
+							if (player2_pos.X <= player2_bullet.X + 1 && player2_pos.X >= player2_bullet.X - 1 && player2_pos.Y <= player2_bullet.Y + 1 && player2_pos.Y >= player2_bullet.Y - 1) {
+								health_player_2--;
+							}
+							if (player1_pos.X <= player2_bullet.X + 1 && player1_pos.X >= player2_bullet.X - 1 && player1_pos.Y <= player2_bullet.Y + 1 && player1_pos.Y >= player2_bullet.Y - 1) {
+								health_player_1--;
+							}
+							player2_bullet.X = -1;
+						}
+					}
+					else {
+						if (player1_pos.X <= player2_bullet.X + 2 && player1_pos.X >= player2_bullet.X - 2 && player1_pos.Y <= player2_bullet.Y + 2 && player1_pos.Y >= player2_bullet.Y - 2) {
+							health_player_1--;
+						}
+						player2_bullet.X = -1;
+					}
+
+				}
+				else if (L2 == 1)
+				{
+					if (map[moveDirection(player2_bullet, -1, 0).Y][moveDirection(player2_bullet, -1, 0).X] != L'█')
+					{
+						player2_bullet.X--;
+						if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 0)
+							health_player_1 -= 1;
+
+						else if (player2_bullet.Y == player1_pos.Y && player2_bullet.X == player1_pos.X && upgrade_bullets_2 == 1)
+							health_player_1 -= 5;
+
+						if (map[player2_bullet.Y][player2_bullet.X] == L'║') {
+							wall_x = player2_bullet.X;
+							wall_y = player2_bullet.Y;
+							if (player2_pos.X <= player2_bullet.X + 1 && player2_pos.X >= player2_bullet.X - 1 && player2_pos.Y <= player2_bullet.Y + 1 && player2_pos.Y >= player2_bullet.Y - 1) {
+								health_player_2--;
+							}
+							if (player1_pos.X <= player2_bullet.X + 1 && player1_pos.X >= player2_bullet.X - 1 && player1_pos.Y <= player2_bullet.Y + 1 && player1_pos.Y >= player2_bullet.Y - 1) {
+								health_player_1--;
+							}
+							player2_bullet.X = -1;
+						}
+					}
+					else {
+						if (player1_pos.X <= player2_bullet.X + 2 && player1_pos.X >= player2_bullet.X - 2 && player1_pos.Y <= player2_bullet.Y + 2 && player1_pos.Y >= player2_bullet.Y - 2) {
+							health_player_1--;
+						}
+						player2_bullet.X = -1;
+					}
+				}
+				else {
+					if (player1_pos.X <= player2_bullet.X + 2 && player1_pos.X >= player2_bullet.X - 2 && player1_pos.Y <= player2_bullet.Y + 2 && player1_pos.Y >= player2_bullet.Y - 2) {
+						health_player_1--;
+					}
+					player2_bullet.X = -1;
+				}
+			}
+
+		}
+
+		// Draw map
+		SetConsoleOutputCP(65001);
+		_setmode(_fileno(stdout), _O_U16TEXT);
+		for (int i = 0; i < 24; i++) {
+			for (int j = 0; j < 112; j++) {
+				map[i][j] = L' ';
+			}
+		}
+		///////////////////dor kesh
+		for (int i = 0; i < 24; i++) {
+			map[i][0] = L'█';
+		}
+		for (int i = 0; i < 112; i++) {
+			map[0][i] = L'█';
+		}
+		for (int i = 0; i < 112; i++) {
+			map[23][i] = L'█';
+		}
+		for (int i = 0; i < 24; i++) {
+			map[i][111] = L'█';
+		}
+		//////////////////////////////khat chi
+		for (int i = 7; i < 14; i++) {
+			if (wall_y != i)
+				map[i][12] = L'║';
+		}
+		for (int j = 7; j < 14; j++) {
+			if (wall_y != j)
+				map[j][99] = L'║';
+		}
+		map[3][86] = L'█';
+		map[4][86] = L'█';
+		if (wall_x != 85 && wall_y != 4)
+			map[4][85] = L'║';
+
+		map[3][25] = L'█';
+		map[4][25] = L'█';
+		if (wall_x != 26 && wall_y != 3)
+			map[3][26] = L'║';
+
+
+		map[19][86] = L'█';
+		map[18][86] = L'█';
+		if (wall_x != 85 && wall_y != 19)
+			map[19][85] = L'║';
+
+
+
+		map[19][25] = L'█';
+		map[18][25] = L'█';
+		if (wall_x != 26 && wall_y != 18)
+			map[18][26] = L'║';
+
+		map[5][57] = L'█';
+		map[5][56] = L'█';
+		map[5][55] = L'█';
+
+		map[7][56] = L'█';
+		map[8][56] = L'█';
+		map[8][55] = L'█';
+		map[8][54] = L'█';
+		map[8][53] = L'█';
+		map[9][53] = L'█';
+		map[10][53] = L'█';
+		map[10][52] = L'█';
+		map[10][51] = L'█';
+		map[10][60] = L'█';
+		map[10][61] = L'█';
+		map[10][62] = L'█';
+		map[11][60] = L'█';
+		map[12][60] = L'█';
+		map[12][59] = L'█';
+		map[12][58] = L'█';
+		map[12][57] = L'█';
+		map[12][56] = L'█';
+		map[13][56] = L'█';
+		map[16][56] = L'█';
+		map[16][57] = L'█';
+		map[16][55] = L'█';
+		if (wall_x != 54 && wall_y != 10)
+			map[10][54] = L'║';
+		if (wall_x != 39 && wall_y != 11)
+			map[11][39] = L'║';
+		if (wall_x != 74 && wall_y != 9)
+			map[9][74] = L'║';
+
+
+
+		map[7][42] = L'█';
+		map[7][41] = L'█';
+		map[8][40] = L'█';
+		map[8][39] = L'█';
+		map[9][38] = L'█';
+		map[9][37] = L'█';
+		map[10][36] = L'█';
+		map[10][35] = L'█';
+		map[11][37] = L'█';
+		map[11][38] = L'█';
+		map[12][39] = L'█';
+		map[12][40] = L'█';
+		map[13][41] = L'█';
+		map[13][42] = L'█';
+
+
+
+
+		map[7][71] = L'█';
+		map[7][72] = L'█';
+		map[8][73] = L'█';
+		map[8][74] = L'█';
+		map[9][75] = L'█';
+		map[9][76] = L'█';
+		map[10][77] = L'█';
+		map[10][78] = L'█';
+		map[11][76] = L'█';
+		map[11][75] = L'█';
+		map[12][74] = L'█';
+		map[12][73] = L'█';
+		map[13][72] = L'█';
+		map[13][71] = L'█';
+
+		if (pos_ghost_player == 0)
+			map[3][56] = L'ѽ';
+		if (ghalb == 1)
+			map[10][56] = L'❤';
+
+
+
+		for (int i = 0; i < 24; i++) {
+
+			for (int j = 0; j < 112; j++) {
+				if (i == 9 && j == 60) {
+					map[9][60] = L'෧';
+					wprintf(L"\033[1;37m෧\033[0m");
+				}
+				else if (i == 14 && j == 56) {
+					map[14][56] = L'෧';
+					wprintf(L"\033[1;37m෧\033[0m");
+				}
+				else if (i == 11 && j == 53) {
+					map[11][53] = L'෧';
+					wprintf(L"\033[1;37m෧\033[0m");
+				}
+				else if (i == 19 && j == 9) {
+					map[19][9] = L'֍';
+
+					wprintf(L"\033[1;33m֍\033[0m");
+				}
+				else if (i == 19 && j == 104) {
+					map[19][104] = L'֍';
+					wprintf(L"\033[1;33m֍\033[0m");
+				}
+				else if (i == 9 && j == 25 && pos_upgrade_bullets_L == 0) {
+					map[9][25] = L'✶';
+
+					wprintf(L"\033[1;33m✶\033[0m");
+				}
+				else if (i == 9 && j == 96 && pos_upgrade_bullets_R == 0) {
+					map[9][96] = L'✶';
+					wprintf(L"\033[1;33m✶\033[0m");
+				}
+				else if (i == 15 && j == 56 && pos_frag_player == 0) {
+					map[15][56] = L'Ơ';
+
+					wprintf(L"\033[1;35mƠ\033[0m");
+				}
+				else
+				{
+					wprintf(L"%wc", map[i][j]);
+				}
+			}
+			wprintf(L"\n");
+		}
+
+		// Draw players
+		map[player1_pos.Y][player1_pos.X] = '1';
+		map[player2_pos.Y][player2_pos.X] = '2';
+
+		// Draw bullets
+		if (player1_bullet.X < 112 && player1_bullet.X != -1) {
+			if (frag_player_1 == 0)
+				map[player1_bullet.Y][player1_bullet.X] = '.';
+			else
+				map[player1_bullet.Y][player1_bullet.X] = L'Ơ';
+		}
+
+		if (player2_bullet.X < 112 && player2_bullet.X != -1) {
+			if (frag_player_2 == 0)
+				map[player2_bullet.Y][player2_bullet.X] = '.';
+			else
+				map[player2_bullet.Y][player2_bullet.X] = L'Ơ';
+		}
+		// Output to console
+		for (int y = 0; y < 24; y++) {
+			COORD place;
+			place.X = 0;
+			place.Y = y;
+			WriteConsoleOutputCharacterW(hStdout, map[y], 112, place, &bytes_written);
+			//WriteConsoleOutputCharacterA is a function in the Windows Console API that writes a string of characters to a console screen buffer at a specified location.
+			//The first parameter identifies where to write the characters
+			//The second parameter is a C-style string or an array of characters that you want to write to the screen buffer.
+			//The third parameter specifies how many characters from the string should be written to the screen buffer.
+			//The fourth parameter specifies the coordinates (given as a COORD structure) of the first cell in the console screen buffer where writing will begin.
+			//The fifth parameter is a pointer to a variable that receives the number of characters actually written to the console screen buffer.
+
+		}
+
+		_setmode(_fileno(stdout), _O_TEXT);
+		printf("\n1:%d,2:%d,%d,%d", health_player_1, health_player_2, score_move_2, move_ghost_player_1);
+		// Game tick delay
+		Sleep(100);
+	}
+
+
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
