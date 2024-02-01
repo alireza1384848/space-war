@@ -1,2 +1,20 @@
-﻿  LINK : F:\My_project\Space War_Solution\x64\Debug\Space War.exe not found or not built by the last incremental link; performing full link
+﻿  Space War.cpp
+F:\My_project\Space War_Solution\Space War\Space War.cpp(29,33): warning C4114: same type qualifier used more than once
+F:\My_project\Space War_Solution\Space War\Space War.cpp(127,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(282,33): warning C4114: same type qualifier used more than once
+F:\My_project\Space War_Solution\Space War\Space War.cpp(381,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(386,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(428,2): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(431,2): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(544,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(608,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1299,83): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1325,81): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1350,83): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1375,81): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1829,117): warning C4806: '==': unsafe operation: no value of type 'bool' promoted to type 'int' can equal the given constant
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1845,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1897,82): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1950,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2001,82): warning C4553: '==': result of expression not used; did you intend '='?
   Space War.vcxproj -> F:\My_project\Space War_Solution\x64\Debug\Space War.exe
