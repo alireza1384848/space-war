@@ -1,6 +1,7 @@
 ﻿#pragma warning(disable:4996)
 #include<stdio.h>
 #include<string.h>
+#include<time.h>
 #include<conio.h>
 #include<stdlib.h>
 #include<windows.h>
@@ -8,16 +9,33 @@
 #include <io.h>
 #include <fcntl.h>
 #pragma execution_character_set("utf-8")
-
+struct History {
+	int id;
+	char player1[50];
+	char player2[50];
+	char winer_map1[50];
+	char winer_map2[50];
+	char winer_map3[50];
+	char winer_all[50];
+};
 struct profile {
+	int id;
 	char UserName[40];
 	char Password[40];
 	char email[40];
+	int win;
+	int lose;
+	int score;
 };
-void game_play_map_3();
-void game_play_map_2();
-void game_play_map_1();
-void shape_Map(wchar_t map[24][112],bool ghalb);
+void last_win(int loc_1, int loc_2, int loc_winer1, int loc_winer2, int loc_winer3);
+void Update_File(int loc, int num, char s_w_l);
+void loser_winer_maps(int loc);
+int LOC_to_Score(int Loc);
+char* Loc_to_Username(int Loc);
+void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2);
+void game_play_map_2(int loc_player_1, int loc_player_2, int loc_winer1);
+void game_play_map_1(int loc_player_1, int loc_player_2);
+
 void signin_player2(int loc_player_1);
 void change_email(int loc, char * username);
 void Change_Username(int loc);
@@ -55,6 +73,13 @@ BOOL keyPressed(int key) {
 	//This function returns a short integer that indicates whether a particular key is pressed or not.
 	return GetAsyncKeyState(key);
 	//returns a non-zero value if the key is currently pressed. If not, it will return 0.
+}
+void assd() {
+	FILE* a;
+	profile a1 = {0,"","","",1,1,1};
+	a = fopen("profile.bin", "wb");
+	fwrite(&a1, sizeof(profile), 1, a);
+	fclose(a);
 }
 
 
@@ -95,6 +120,39 @@ void red() {
 }
 void reset() {
 	printf("\033[0m");
+}
+void random_color(int i){
+	srand(i);
+	int a = 0;
+	a=rand() % 8;
+	switch (a)
+	{
+	case(0):
+	magneta();
+	break;
+	case(1):
+		yellow();
+		break;
+	case(2):
+		blue();
+		break;
+	case(3):
+		green();
+		break;
+	case(4):
+		red();
+		break;
+	case(5):
+		white();
+		break;
+	case(6):
+		cyan();
+		break;
+	default:
+		cyan();
+		break;
+	}
+
 }
 ///////////////////////////////////////////////
 void start_page() {
@@ -160,6 +218,23 @@ void menu_inform() {
 
 
 
+
+}
+
+int last_Id() {
+	FILE* last;
+	int i = 0;
+	profile data[50];
+	last = fopen("profile.bin", "rb");
+	if (last == NULL) {
+		last = fopen("profile.bin", "rb");
+	}
+	while (!feof(last)) {
+		fread(&data[i], sizeof(profile), 1, last);
+		i++;
+	}
+
+	return i;
 
 }
 
@@ -267,6 +342,11 @@ void signup() {
 			Prof_Data = fopen("profile.bin", "a");
 		}
 		else {
+			prof.score = 0;
+			prof.win = 0;
+			prof.lose = 0;
+			int last = last_Id();
+			prof.id = last --;
 			fwrite(&prof, sizeof(profile), 1, Prof_Data);
 			break;
 		}
@@ -492,6 +572,9 @@ void changepass(char * email,int loc) {
 				Data = fopen("profile.bin", "wb");
 			}
 			for (int j = 1; j <= i ; j++) {
+				User_data[j].score = 0;
+				User_data[j].win = 0;
+				User_data[j].lose = 0;
 				fwrite(&User_data[j], sizeof(profile), 1, Data);
 			}
 				fclose(Data);
@@ -832,8 +915,7 @@ void signin_player2(int loc_player_1) {
 
 	if (Username_checker(username) >= 1 && passfinder(Username_checker(username), pass) == 0)
 	{
-	
-		game_play_map_1();
+		game_play_map_1(loc_player_1,loc_player_2);
 	}
 	else {
 		signin_player2(loc_player_1);
@@ -842,300 +924,7 @@ void signin_player2(int loc_player_1) {
 
 }
 
-void shape_Map(wchar_t map[24][112], bool ghalb) {
-
-	SetConsoleOutputCP(65001);
-	_setmode(_fileno(stdout), _O_U16TEXT);
-	
-	for (int i = 0; i < 24; i++) {
-		for (int j = 0; j < 112; j++) {
-			map[i][j] = L' ';
-		}
-
-	}
-
-	for (int i = 0; i < 24; i++) {
-		map[i][0] = L'█';
-	}
-	for (int i = 0; i < 112; i++) {
-		map[0][i] = L'█';
-	}
-	for (int i = 0; i < 112; i++) {
-		map[23][i] = L'█';
-	}
-	for (int i = 0; i < 24; i++) {
-		map[i][111] = L'█';
-	}
-	///////////////////////////
-	for (int i = 12; i < 20; i++) {
-
-		map[4][i] = L'█';
-
-	}
-	for (int i = 4; i < 16; i++) {
-		map[i][19] = L'█';
-	}
-
-
-
-	for (int i = 19; i > 12; i--) {
-		map[16][i] = L'█';
-	}
-	map[5][20] = L'║';
-	map[6][20] = L'║';
-
-	map[15][20] = L'║';
-	map[14][20] = L'║';
-	map[2][27] = L'█';
-	map[3][27] = L'█';
-	map[2][28] = L'║';
-	map[3][28] = L'║';
-
-	map[18][27] = L'█';
-	map[19][27] = L'█';
-	for (int i = 5; i < 16; i++) {
-		if (i == 10)
-			map[i][56] = L'║';
-		else
-			map[i][56] = L'█';
-	}
-
-
-	for (int i = 50; i > 40; i--) {
-		map[14][i] = L'█';
-	}
-	for (int i = 62; i < 72; i++) {
-		map[6][i] = L'█';
-	}
-	//////////////////
-	for (int i = 99; i > 91; i--) {
-		map[4][i] = L'█';
-	}
-
-	for (int i = 4; i < 16; i++) {
-		map[i][92] = L'█';
-	}
-	for (int i = 92; i < 100; i++) {
-		map[16][i] = L'█';
-	}
-	map[5][91] = L'║';
-	map[6][91] = L'║';
-
-
-	map[15][91] = L'║';
-	map[14][91] = L'║';
-
-	map[2][84] = L'█';
-	map[3][84] = L'█';
-	map[18][83] = L'║';
-	map[19][83] = L'║';
-
-	map[18][84] = L'█';
-	map[19][84] = L'█';
-
-	int m = 0;
-	for (int i = 0; i < 24; i++) {
-		for (int j = 0; j < 112; j++) {
-			if (i == 4 && j == 55 && ghalb==1) {
-				map[i][j] = L'❤';
-				wprintf(L"%wc", map[i][j]);
-			}
-			else if (j == 11 && i == 19) {
-				map[i][j] = L'֍';
-				wprintf(L"\033[1;33m֍\033[0m");
-			}
-			else if (j == 101 && i == 19) {
-				map[i][j] = L'֍';
-				wprintf(L"\033[1;33m֍\033[0m");
-			}
-			else if (i == 17 && j == 29) {
-				map[i][j] = L'෧';
-				wprintf(L"\033[1;37m෧\033[0m");
-			}
-			else if (i == 3 && j == 88) {
-				map[i][j] = L'෧';
-				wprintf(L"\033[1;37m෧\033[0m");
-			}
-			else
-				wprintf(L"%wc", map[i][j]);
-
-		}
-		wprintf(L"\n");
-
-	}
-
-	_setmode(_fileno(stdout), _O_TEXT);
-}
-void shape_Map_2() {
-	SetConsoleOutputCP(65001);
-	_setmode(_fileno(stdout), _O_U16TEXT);
-	wchar_t map_2[24][112];
-	for (int i = 0; i < 24; i++) {
-		for (int j = 0; j < 112; j++) {
-			map_2[i][j] = L' ';
-		}
-	}
-	///////////////////dor kesh
-	for (int i = 0; i < 24; i++) {
-		map_2[i][0] = L'█';
-	}
-	for (int i = 0; i < 112; i++) {
-		map_2[0][i] = L'█';
-	}
-	for (int i = 0; i < 112; i++) {
-		map_2[23][i] = L'█';
-	}
-	for (int i = 0; i < 24; i++) {
-		map_2[i][111] = L'█';
-	}
-	//////////////////////////////khat chi
-	for (int i = 7; i < 14; i++)
-		map_2[i][12] = L'║';
-
-	for (int i = 7; i < 14; i++)
-		map_2[i][99] = L'║';
-
-	map_2[3][86] = L'█';
-	map_2[4][86] = L'█';
-	map_2[4][85] = L'║';
-
-	map_2[3][25] = L'█';
-	map_2[4][25] = L'█';
-	map_2[3][26] = L'║';
-
-
-	map_2[19][86] = L'█';
-	map_2[18][86] = L'█';
-	map_2[19][85] = L'║';
-
-
-
-	map_2[19][25] = L'█';
-	map_2[18][25] = L'█';
-	map_2[18][26] = L'║';
-
-	map_2[5][57] = L'█';
-	map_2[5][56] = L'█';
-	map_2[5][55] = L'█';
-
-	map_2[7][56] = L'█';
-	map_2[8][56] = L'█';
-	map_2[8][55] = L'█';
-	map_2[8][54] = L'█';
-	map_2[8][53] = L'█';
-	map_2[9][53] = L'█';
-	map_2[10][53] = L'█';
-	map_2[10][52] = L'█';
-	map_2[10][51] = L'█';
-	map_2[10][60] = L'█';
-	map_2[10][61] = L'█';
-	map_2[10][62] = L'█';
-	map_2[11][60] = L'█';
-	map_2[12][60] = L'█';
-	map_2[12][59] = L'█';
-	map_2[12][58] = L'█';
-	map_2[12][57] = L'█';
-	map_2[12][56] = L'█';
-	map_2[13][56] = L'█';
-	map_2[16][56] = L'█';
-	map_2[16][57] = L'█';
-	map_2[16][55] = L'█';
-	map_2[10][54] = L'║';
-	map_2[11][39] = L'║';
-	map_2[9][74] = L'║';
-
-
-
-	map_2[7][42] = L'█';
-	map_2[7][41] = L'█';
-	map_2[8][40] = L'█';
-	map_2[8][39] = L'█';
-	map_2[9][38] = L'█';
-	map_2[9][37] = L'█';
-	map_2[10][36] = L'█';
-	map_2[10][35] = L'█';
-	map_2[11][37] = L'█';
-	map_2[11][38] = L'█';
-	map_2[12][39] = L'█';
-	map_2[12][40] = L'█';
-	map_2[13][41] = L'█';
-	map_2[13][42] = L'█';
-
-
-
-
-	map_2[7][71] = L'█';
-	map_2[7][72] = L'█';
-	map_2[8][73] = L'█';
-	map_2[8][74] = L'█';
-	map_2[9][75] = L'█';
-	map_2[9][76] = L'█';
-	map_2[10][77] = L'█';
-	map_2[10][78] = L'█';
-	map_2[11][76] = L'█';
-	map_2[11][75] = L'█';
-	map_2[12][74] = L'█';
-	map_2[12][73] = L'█';
-	map_2[13][72] = L'█';
-	map_2[13][71] = L'█';
-
-
-	map_2[3][56] = L'ѽ';
-	map_2[10][56] = L'❤';
-	map_2[15][56] = L'Ơ';
-
-
-	for (int i = 0; i < 24; i++) {
-
-		for (int j = 0; j < 112; j++) {
-			if (i == 9 && j == 60) {
-				map_2[9][60] = L'෧';
-				wprintf(L"\033[1;37m෧\033[0m");
-			}
-			else if (i == 14 && j == 56) {
-				map_2[14][56] = L'෧';
-				wprintf(L"\033[1;37m෧\033[0m");
-			}
-			else if (i == 11 && j == 53) {
-				map_2[11][53] = L'෧';
-				wprintf(L"\033[1;37m෧\033[0m");
-			}
-			else if (i == 19 && j == 9) {
-				map_2[19][9] = L'֍';
-
-				wprintf(L"\033[1;33m֍\033[0m");
-			}
-			else if (i == 19 && j == 104) {
-				map_2[19][104] = L'֍';
-				wprintf(L"\033[1;33m֍\033[0m");
-			}
-			else if (i == 9 && j == 25) {
-				map_2[9][25] = L'✶';
-
-				wprintf(L"\033[1;33m✶\033[0m");
-			}
-			else if (i == 9 && j == 96) {
-				map_2[9][96] = L'✶';
-				wprintf(L"\033[1;33m✶\033[0m");
-			}
-			else if (i == 15 && j == 56) {
-				map_2[15][56] = L'Ơ';
-
-				wprintf(L"\033[1;35mƠ\033[0m");
-			}
-			else
-			{
-				wprintf(L"%wc", map_2[i][j]);
-			}
-		}
-		wprintf(L"\n");
-	}
-
-
-
-	_setmode(_fileno(stdout), _O_TEXT);
-}
-void game_play_map_1() {
+void game_play_map_1(int loc_player_1,int loc_player_2) {
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
 	int health_player_1 = 5;
@@ -1261,20 +1050,21 @@ void game_play_map_1() {
 
 		}
 		if (keyPressed(PLAYER1_SHOOT)) {
+			Beep(500, 50);
 			if (up == 1) {
-				player1_bullet = moveDirection(player1_pos, 0, -1);
+				player1_bullet = player1_pos;
 				U = 1; D = 0; L = 0; R = 0;
 			}
 			else if (down == 1) {
-				player1_bullet = moveDirection(player1_pos, 0, 1);
+				player1_bullet = player1_pos;
 				D = 1; U = 0; L = 0; R = 0;
 			}
 			else if (left == 1) {
-				player1_bullet = moveDirection(player1_pos, -1, 0);
+				player1_bullet = player1_pos;
 				L = 1; U = 0; D = 0; R = 0;
 			}
 			else if (right == 1) {
-				player1_bullet = moveDirection(player1_pos, 1, 0);
+				player1_bullet = player1_pos;
 				R = 1; U = 0; D = 0; L = 0;
 			}
 
@@ -1380,20 +1170,21 @@ void game_play_map_1() {
 				player2_pos = moveDirection(player2_pos, 1, 0);
 		}
 		if (keyPressed(PLAYER2_SHOOT)) {
+			Beep(800, 50);
 			if (up_2 == 1) {
-				player2_bullet = moveDirection(player2_pos, 0, -1);
+				player2_bullet = player2_pos;
 				U2 = 1; D2 = 0; L2 = 0; R2 = 0;
 			}
 			else if (down_2 == 1) {
-				player2_bullet = moveDirection(player2_pos, 0, 1);
+				player2_bullet = player2_pos;
 				D2 = 1; U2 = 0; L2 = 0; R2 = 0;
 			}
 			else if (left_2 == 1) {
-				player2_bullet = moveDirection(player2_pos, -1, 0);
+				player2_bullet = player2_pos;
 				L2 = 1; U2 = 0; D2 = 0; R2 = 0;
 			}
 			else if (right_2 == 1) {
-				player2_bullet = moveDirection(player2_pos, -1, 0);
+				player2_bullet = player2_pos;
 				R2 = 1; U2 = 0; D2 = 0; L2 = 0;
 			}
 		}
@@ -1496,10 +1287,136 @@ void game_play_map_1() {
 		// Draw map
 		SetConsoleOutputCP(65001);
 		_setmode(_fileno(stdout), _O_U16TEXT);
-		shape_Map(map,ghalb);
+
+		for (int i = 0; i < 24; i++) {
+			for (int j = 0; j < 112; j++) {
+				map[i][j] = L' ';
+			}
+
+		}
+
+		for (int i = 0; i < 24; i++) {
+			map[i][0] = L'█';
+		}
+		for (int i = 0; i < 112; i++) {
+			map[0][i] = L'█';
+		}
+		for (int i = 0; i < 112; i++) {
+			map[23][i] = L'█';
+		}
+		for (int i = 0; i < 24; i++) {
+			map[i][111] = L'█';
+		}
+		///////////////////////////
+		for (int i = 12; i < 20; i++) {
+
+			map[4][i] = L'█';
+
+		}
+		for (int i = 4; i < 16; i++) {
+			map[i][19] = L'█';
+		}
+
+
+
+		for (int i = 19; i > 12; i--) {
+			map[16][i] = L'█';
+		}
+		map[5][20] = L'║';
+		map[6][20] = L'║';
+
+		map[15][20] = L'║';
+		map[14][20] = L'║';
+		map[2][27] = L'█';
+		map[3][27] = L'█';
+		map[2][28] = L'║';
+		map[3][28] = L'║';
+
+		map[18][27] = L'█';
+		map[19][27] = L'█';
+		for (int i = 5; i < 16; i++) {
+			if (i == 10)
+				map[i][56] = L'║';
+			else
+				map[i][56] = L'█';
+		}
+
+
+		for (int i = 50; i > 40; i--) {
+			map[14][i] = L'█';
+		}
+		for (int i = 62; i < 72; i++) {
+			map[6][i] = L'█';
+		}
+		//////////////////
+		for (int i = 99; i > 91; i--) {
+			map[4][i] = L'█';
+		}
+
+		for (int i = 4; i < 16; i++) {
+			map[i][92] = L'█';
+		}
+		for (int i = 92; i < 100; i++) {
+			map[16][i] = L'█';
+		}
+		map[5][91] = L'║';
+		map[6][91] = L'║';
+
+
+		map[15][91] = L'║';
+		map[14][91] = L'║';
+
+		map[2][84] = L'█';
+		map[3][84] = L'█';
+		map[18][83] = L'║';
+		map[19][83] = L'║';
+
+		map[18][84] = L'█';
+		map[19][84] = L'█';
+
+		int m = 0;
+		for (int i = 0; i < 24; i++) {
+			for (int j = 0; j < 112; j++) {
+				if (i == 4 && j == 55 && ghalb == 1) {
+					map[i][j] = L'❤';
+					wprintf(L"%wc", map[i][j]);
+				}
+				else if (j == 11 && i == 19) {
+					map[i][j] = L'֍';
+					wprintf(L"\033[1;33m֍\033[0m");
+				}
+				else if (j == 101 && i == 19) {
+					map[i][j] = L'֍';
+					wprintf(L"\033[1;33m֍\033[0m");
+				}
+				else if (i == 17 && j == 29) {
+					map[i][j] = L'෧';
+					wprintf(L"\033[1;37m෧\033[0m");
+				}
+				else if (i == 3 && j == 88) {
+					map[i][j] = L'෧';
+					wprintf(L"\033[1;37m෧\033[0m");
+				}
+				else if (i == player2_pos.Y && j == player2_pos.X) {
+					map[player2_pos.Y][player2_pos.X] = L'ʘ';
+					wprintf(L"\033[31mʘ\033[0m");
+
+				}
+				else if (i == player1_pos.Y && j == player1_pos.X) {
+					map[player1_pos.Y][player1_pos.X] = L'ʘ';
+					wprintf(L"\033[32mʘ\033[0m");
+
+				}
+				else
+					wprintf(L"%wc", map[i][j]);
+
+			}
+			wprintf(L"\n");
+
+		}
 		// Draw players
-		map[player1_pos.Y][player1_pos.X] = '1';
-		map[player2_pos.Y][player2_pos.X] = '2';
+		map[player1_pos.Y][player1_pos.X] = L'ʘ';
+		map[player2_pos.Y][player2_pos.X] = L'ʘ';
 
 		// Draw bullets
 		if (player1_bullet.X < 112 && player1_bullet.X != -1) map[player1_bullet.Y][player1_bullet.X] = '.';
@@ -1521,14 +1438,24 @@ void game_play_map_1() {
 		}
 
 		_setmode(_fileno(stdout), _O_TEXT);
-		printf("\n1:%d,2:%d", health_player_1, health_player_2);
+		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d\033[0m\t\t\tMap Num = 1\t\t\033[1;31mPlayer2:%s   Health:%d Score:%d\033[0m", Loc_to_Username(loc_player_1), health_player_1,LOC_to_Score(loc_player_1), Loc_to_Username(loc_player_2), health_player_2, LOC_to_Score(loc_player_2));
 		// Game tick delay
+	
 		Sleep(100);
 	}
-	game_play_map_2();
 
+	if (health_player_1 <= 0) {
+	loser_winer_maps(loc_player_2);
+	game_play_map_2(loc_player_1,loc_player_2, loc_player_2);
+	
+	}
+	else {
+		loser_winer_maps(loc_player_1);
+		game_play_map_2(loc_player_1, loc_player_2, loc_player_1);
+	}
 }
-void game_play_map_2() {
+
+void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1) {
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
 	int health_player_1 = 5;
@@ -1583,13 +1510,13 @@ void game_play_map_2() {
 	int saved_frag_1 = 0;
 	int saved_frag_2 = 0;
 	hidecursor();
-	while (1) {
+	while (health_player_1>0&& health_player_2>0) {
 		// Clear screen
 		system("cls");
 
 		//ghost being
-		if (move_ghost_player_1 + 7 == score_move_1) ghost_player_1 = 0;
-		if (move_ghost_player_2 + 7 == score_move_2) ghost_player_2 = 0;
+		if (move_ghost_player_1 + 7 <= score_move_1) ghost_player_1 = 0;
+		if (move_ghost_player_2 + 7 <= score_move_2) ghost_player_2 = 0;
 		// Input handling for Player 1
 		if (keyPressed(PLAYER1_UP) && map[moveDirection(player1_pos, 0, -1).Y][moveDirection(player1_pos, 0, -1).X] != L'║') {
 			score_move_1++;
@@ -1802,6 +1729,7 @@ void game_play_map_2() {
 
 		}
 		if (keyPressed(PLAYER1_SHOOT)) {
+			Beep(500, 50);
 			score_bullet_player_1++;
 			score_move_1++;
 			if (up == 1) {
@@ -2034,6 +1962,7 @@ void game_play_map_2() {
 		}
 		if (keyPressed(PLAYER2_SHOOT)) {
 			score_move_2++;
+			Beep(800, 50);
 			score_bullet_player_2++;
 			if (up_2 == 1) {
 				player2_bullet = player2_pos;
@@ -2672,6 +2601,17 @@ void game_play_map_2() {
 
 					wprintf(L"\033[1;35mƠ\033[0m");
 				}
+				else if (i == player2_pos.Y && j == player2_pos.X) {
+					map[player2_pos.Y][player2_pos.X] = L'ʘ';
+					wprintf(L"\033[31mʘ\033[0m");
+
+				}
+				else if (i == player1_pos.Y && j == player1_pos.X) {
+					map[player1_pos.Y][player1_pos.X] = L'ʘ';
+					wprintf(L"\033[32mʘ\033[0m");
+
+				}
+				
 				else
 				{
 					wprintf(L"%wc", map[i][j]);
@@ -2681,8 +2621,8 @@ void game_play_map_2() {
 		}
 
 		// Draw players
-		map[player1_pos.Y][player1_pos.X] = '1';
-		map[player2_pos.Y][player2_pos.X] = '2';
+		map[player1_pos.Y][player1_pos.X] = L'ʘ';
+		map[player2_pos.Y][player2_pos.X] = L'ʘ';
 
 		// Draw bullets
 		if (player1_bullet.X < 112 && player1_bullet.X != -1) {
@@ -2714,17 +2654,24 @@ void game_play_map_2() {
 		}
 
 		_setmode(_fileno(stdout), _O_TEXT);
-		printf("\n1:%d,2:%d,%d,%d", health_player_1, health_player_2, score_move_2, move_ghost_player_1);
+		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d\033[0m\t\t\tMap Num = 2\t\t\033[1;31mPlayer2:%s   Health:%d Score:%d\033[0m", Loc_to_Username(loc_player_1), health_player_1, LOC_to_Score(loc_player_1), Loc_to_Username(loc_player_2), health_player_2, LOC_to_Score(loc_player_2));
 		// Game tick delay
 		Sleep(100);
 	}
+	if (health_player_1 <= 0) {
+		loser_winer_maps(loc_player_2);
+		game_play_map_3(loc_player_1, loc_player_2, loc_winer1, loc_player_2);
+	}
 
-
-
+	else {
+		loser_winer_maps(loc_player_1);
+		game_play_map_3(loc_player_1, loc_player_2,loc_winer1, loc_player_1);
+	}
 
 
 }
-void game_play_map_3() {
+
+void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2) {
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
 	int health_player_1 = 5;
@@ -2779,7 +2726,9 @@ void game_play_map_3() {
 	int saved_frag_1 = 0;
 	int saved_frag_2 = 0;
 	hidecursor();
-	while (1) {
+	while (health_player_1>0 && health_player_2>0)
+	
+	{
 		// Clear screen
 		system("cls");
 
@@ -3034,6 +2983,7 @@ void game_play_map_3() {
 
 		}
 		if (keyPressed(PLAYER1_SHOOT)) {
+			Beep(500, 50);
 			score_bullet_player_1++;
 			score_move_1++;
 			if (up == 1) {
@@ -3302,6 +3252,7 @@ void game_play_map_3() {
 		}
 		if (keyPressed(PLAYER2_SHOOT)) {
 			score_move_2++;
+			Beep(800, 50);
 			score_bullet_player_2++;
 			if (up_2 == 1) {
 				player2_bullet = player2_pos;
@@ -3949,6 +3900,16 @@ void game_play_map_3() {
 					map[i][j] = L'֍';
 					wprintf(L"\033[1;34m%wc\033[0m", map[i][j]);
 				}
+				else if (i == player2_pos.Y && j == player2_pos.X) {
+					map[player2_pos.Y][player2_pos.X] = L'ʘ';
+					wprintf(L"\033[31mʘ\033[0m");
+				}
+				else if (i == player1_pos.Y && j == player1_pos.X) {
+					map[player1_pos.Y][player1_pos.X] = L'ʘ';
+					wprintf(L"\033[32mʘ\033[0m");
+
+				}
+
 				else if (i == 21 && j == 56)
 				{
 					map[i][j] = L'֍';
@@ -3963,8 +3924,8 @@ void game_play_map_3() {
 		}
 
 		// Draw players
-		map[player1_pos.Y][player1_pos.X] = '1';
-		map[player2_pos.Y][player2_pos.X] = '2';
+		map[player1_pos.Y][player1_pos.X] = L'ʘ';
+		map[player2_pos.Y][player2_pos.X] = L'ʘ';
 
 		// Draw bullets
 		if (player1_bullet.X < 112 && player1_bullet.X != -1) {
@@ -3996,22 +3957,190 @@ void game_play_map_3() {
 		}
 
 		_setmode(_fileno(stdout), _O_TEXT);
-		printf("\n1:%d,2:%d,%d,%d", health_player_1, health_player_2, score_move_2, move_ghost_player_1);
+		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d\033[0m\t\t\tMap Num = 3\t\t\033[1;31mPlayer2:%s   Health:%d Score:%d\033[0m", Loc_to_Username(loc_player_1), health_player_1, LOC_to_Score(loc_player_1), Loc_to_Username(loc_player_2), health_player_2, LOC_to_Score(loc_player_2));
 		// Game tick delay
 		Sleep(100);
 	}
+	if (health_player_1 <= 0) {
+		last_win(loc_player_1, loc_player_2, loc_winer1, loc_winer2, loc_player_2);
+	}
+	else
+	{
+		last_win(loc_player_1, loc_player_2, loc_winer1, loc_winer2, loc_player_1);
+	}
+
+
 }
 
+void loser_winer_maps(int loc) {
+	system("cls");
+	hidecursor();
+	for (int i = 0; i <20; i++) {
+		for (size_t j = 0; j < 8; j++)
+		{
+			random_color(i+j);
+			printf("!!%s Win!! ", Loc_to_Username(loc));
+			reset();
+			Sleep(50);
+		}
+		puts("");
+	}
+	//int i =2;
+	//while (i > 0) {
+		//system("color 40");
+		//Sleep(500);
+		//system("color 10");
+		//Sleep(500);
+		//system("color 20");
+		//Sleep(500);
+		//i--;
+	//}
+	Update_File(loc,10,'s');
+	Update_File(loc, 1, 'w');
+
+}
+
+char * Loc_to_Username(int Loc) {
+	int i = 1;
+	FILE* Finder;
+	Finder = fopen("profile.bin","rb");
+	while(Finder == NULL)
+		Finder = fopen("profile.bin", "rb");
+
+	profile data_user[50];
+
+	while (!feof(Finder)) {
+		fread(&data_user[i], sizeof(profile), 1, Finder);
+		i++;
+	}
+	fclose(Finder);
+	return data_user[Loc].UserName;
 
 
+}
+
+int LOC_to_Score(int Loc) {
+	int i = 1;
+	FILE* Finder;
+	Finder = fopen("profile.bin", "rb");
+	while (Finder == NULL)
+		Finder = fopen("profile.bin", "rb");
+
+	profile data_user[50];
+
+	while (!feof(Finder)) {
+		fread(&data_user[i], sizeof(profile), 1, Finder);
+		i++;
+	}
+	fclose(Finder);
+	return data_user[Loc].score;
+
+}
+
+int loc_to_id(int Loc) {
+	int i = 1;
+	FILE* Finder;
+	Finder = fopen("profile.bin", "rb");
+	while (Finder == NULL)
+		Finder = fopen("profile.bin", "rb");
+
+	profile data_user[50];
+
+	while (!feof(Finder)) {
+		fread(&data_user[i], sizeof(profile), 1, Finder);
+		i++;
+	}
+	fclose(Finder);
+	return data_user[Loc].id;
 
 
+}
 
+void Update_File(int loc,int num ,char s_w_l) {
+	int i = 1;
+	FILE* Finder;
+	Finder = fopen("profile.bin", "rb");
+	profile data_user[50];
 
+	while (!feof(Finder)) {
+		fread(&data_user[i], sizeof(profile), 1, Finder);
+		i++;
+	}
+	fclose(Finder);
+	switch (s_w_l)
+	{
+	case('s'):
+		data_user[loc].score += num;
+		break;
+	case('w'):
+		data_user[loc].win += num;
+		break;
 
+	case('l'):
+		data_user[loc].lose += num;
+		break;
+	default:
+		break;
+	}
+	fclose(Finder);
+	FILE* Update;
+	Update = fopen("profile.bin", "wb");
+	for (int j = 1; j <= i; j++) {
+	    fwrite(&data_user[j], sizeof(profile), 1, Update);
+	}
+	fclose(Update);
+}
 
+void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3) {
+	int i = 1;
+	FILE* Finder;
+	profile data_user[50];
+	Finder = fopen("profile.bin", "rb");
+	while (!feof(Finder)) {
+		fread(&data_user[i], sizeof(profile), 1, Finder);
+		i++;
+	}
 
+	fclose(Finder);
 
+	if (data_user[loc_1].win > data_user[loc_2].win) {
+		printf("1 wiiiiiiin");
+		History his;
+		FILE* History1;
+		History1=fopen("History.bin", "a");
+		while(History1==NULL)
+			History1 = fopen("History.bin", "a");
+		his.id = loc_to_id(loc_1);
+		strcpy(his.player1, Loc_to_Username(loc_1));
+	    strcpy(his.player2, Loc_to_Username(loc_2));
+		strcpy(his.winer_map1, Loc_to_Username(loc_winer1));
+		strcpy(his.winer_map2, Loc_to_Username(loc_winer2));
+		strcpy(his.winer_map3, Loc_to_Username(loc_winer3));
+		strcpy(his.winer_all, Loc_to_Username(loc_1));
+		fwrite(&his, sizeof(History), 1, History1);
+		
+		fclose(History1);
+	}
+	else if (data_user[loc_1].win <  data_user[loc_2].win) {
+		printf("2 wiiiiiiin");
+
+		History his;
+		FILE* History1;
+		History1 = fopen("History.bin", "wb");
+		while (History1 == NULL)
+			History1 = fopen("History.bin", "wb");
+		his.id = loc_to_id(loc_1);
+		strcpy(his.player1, Loc_to_Username(loc_1));
+		strcpy(his.player2, Loc_to_Username(loc_2));
+		strcpy(his.winer_map1, Loc_to_Username(loc_winer1));
+		strcpy(his.winer_map2, Loc_to_Username(loc_winer2));
+		strcpy(his.winer_map3, Loc_to_Username(loc_winer3));
+		strcpy(his.winer_all, Loc_to_Username(loc_2));
+		fwrite(&his, sizeof(History), 1, History1);
+		fclose(History1);
+	}
+
+}
 
 
 
@@ -4019,9 +4148,20 @@ void game_play_map_3() {
 
 
 int main() {
+	
+	//printf("%d", last_Id());
+	
 	start_page();
 	//menu_inform();
-
+	//system("cls");
 
 	return 0;
 }
+
+
+
+
+
+
+
+
