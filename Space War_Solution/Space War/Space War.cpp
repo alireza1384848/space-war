@@ -27,13 +27,13 @@ struct profile {
 	int lose;
 	int score;
 };
-void last_win(int loc_1, int loc_2, int loc_winer1, int loc_winer2, int loc_winer3);
+void last_win(int loc_1, int loc_2, int loc_winer1, int loc_winer2, int loc_winer3, int win_1, int win_2, int score_1, int score_2);
 void Update_File(int loc, int num, char s_w_l);
 void loser_winer_maps(int loc);
 int LOC_to_Score(int Loc);
 char* Loc_to_Username(int Loc);
-void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2);
-void game_play_map_2(int loc_player_1, int loc_player_2, int loc_winer1);
+void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2, int win_1, int win_2, int score_1, int score_2);
+void game_play_map_2(int loc_player_1, int loc_player_2, int loc_winer1, int win_1, int win_2, int score_1, int score_2);
 void game_play_map_1(int loc_player_1, int loc_player_2);
 
 void signin_player2(int loc_player_1);
@@ -224,7 +224,7 @@ void menu_inform() {
 int last_Id() {
 	FILE* last;
 	int i = 0;
-	profile data[50];
+	profile data[500];
 	last = fopen("profile.bin", "rb");
 	if (last == NULL) {
 		last = fopen("profile.bin", "rb");
@@ -365,7 +365,7 @@ int Username_checker(const char const * username){
 	int returnere = 0;
 	FILE* Data;
 	Data = fopen("profile.bin", "rb");
-	profile User_data[50];
+	profile User_data[500];
 	while (!feof(Data)) {
 		fread(&User_data[i], sizeof(profile), 1, Data);
 		i++;
@@ -384,7 +384,7 @@ int passfinder(const int loc,char * pass) {
 	int i = 1;
 	FILE* Data;
 	Data = fopen("profile.bin", "rb");
-	profile User_data[50];
+	profile User_data[500];
 	while (!feof(Data)) {
 		fread(&User_data[i], sizeof(profile), 1, Data);
 		i++;
@@ -534,7 +534,7 @@ void changepass(char * email,int loc) {
 	char newpass1[40];
 	FILE* Data;
 	Data = fopen("profile.bin", "rb");
-	profile User_data[50];
+	profile User_data[500];
 	while (!feof(Data)) {
 		fread(&User_data[i], sizeof(profile), 1, Data);
 		i++;
@@ -731,7 +731,7 @@ void changepass_1(int loc,char * username) {
 	char newpass1[40];
 	FILE* Data;
 	Data = fopen("profile.bin", "rb");
-	profile User_data[50];
+	profile User_data[500];
 	while (!feof(Data)) {
 		fread(&User_data[i], sizeof(profile), 1, Data);
 		i++;
@@ -792,7 +792,7 @@ void Change_Username(int loc) {
 	//char newUsername1[40];
 	FILE* Data;
 	Data = fopen("profile.bin", "rb");
-	profile User_data[50];
+	profile User_data[500];
 	while (!feof(Data)) {
 		fread(&User_data[i], sizeof(profile), 1, Data);
 		i++;
@@ -839,7 +839,7 @@ void change_email(int loc, char * username){
 	//char newUsername1[40];
 	FILE* Data;
 	Data = fopen("profile.bin", "rb");
-	profile User_data[50];
+	profile User_data[500];
 	while (!feof(Data)) {
 		fread(&User_data[i], sizeof(profile), 1, Data);
 		i++;
@@ -930,6 +930,11 @@ void game_play_map_1(int loc_player_1,int loc_player_2) {
 	int health_player_1 = 5;
 	int health_player_2 = 5;
 	bool ghalb = 1;
+	int win_1 = 0;
+	int win_2 = 0;
+	int score_1 = 0;
+	int score_2 = 0;
+
 
 
 	wchar_t map[24][112];
@@ -945,6 +950,7 @@ void game_play_map_1(int loc_player_1,int loc_player_2) {
 	int U = 0, D = 0, L = 0, R = 0;
 	int U2 = 0, D2 = 0, L2 = 0, R2 = 0;
 	hidecursor();
+
 	while (health_player_1>0 && health_player_2>0) {
 		// Clear screen
 		system("cls");
@@ -1438,24 +1444,27 @@ void game_play_map_1(int loc_player_1,int loc_player_2) {
 		}
 
 		_setmode(_fileno(stdout), _O_TEXT);
-		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d\033[0m\t\t\tMap Num = 1\t\t\033[1;31mPlayer2:%s   Health:%d Score:%d\033[0m", Loc_to_Username(loc_player_1), health_player_1,LOC_to_Score(loc_player_1), Loc_to_Username(loc_player_2), health_player_2, LOC_to_Score(loc_player_2));
+		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d  wins=%d\033[0m\t\tMap Num = 1\t\033[1;31mPlayer2:%s   Health:%d Score:%d wins=%d\033[0m", Loc_to_Username(loc_player_1), health_player_1,score_1,win_1, Loc_to_Username(loc_player_2), health_player_2, score_2,win_2);
 		// Game tick delay
 	
 		Sleep(100);
 	}
 
 	if (health_player_1 <= 0) {
+		win_2++;
+		score_2 += 10;
 	loser_winer_maps(loc_player_2);
-	game_play_map_2(loc_player_1,loc_player_2, loc_player_2);
-	
+	game_play_map_2(loc_player_1,loc_player_2, loc_player_2,win_1,win_2,score_1,score_2);
 	}
 	else {
+		win_1 ++;
+		score_1 += 10;
 		loser_winer_maps(loc_player_1);
-		game_play_map_2(loc_player_1, loc_player_2, loc_player_1);
+		game_play_map_2(loc_player_1, loc_player_2, loc_player_1, win_1, win_2, score_1, score_2);
 	}
 }
 
-void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1) {
+void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_1, int win_2,int score_1,int score_2) {
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
 	int health_player_1 = 5;
@@ -2654,24 +2663,28 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1) {
 		}
 
 		_setmode(_fileno(stdout), _O_TEXT);
-		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d\033[0m\t\t\tMap Num = 2\t\t\033[1;31mPlayer2:%s   Health:%d Score:%d\033[0m", Loc_to_Username(loc_player_1), health_player_1, LOC_to_Score(loc_player_1), Loc_to_Username(loc_player_2), health_player_2, LOC_to_Score(loc_player_2));
+		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d  wins=%d\033[0m\t\tMap Num = 1\t\033[1;31mPlayer2:%s   Health:%d Score:%d wins=%d\033[0m", Loc_to_Username(loc_player_1), health_player_1, score_1, win_1, Loc_to_Username(loc_player_2), health_player_2, score_2, win_2);
 		// Game tick delay
 		Sleep(100);
 	}
 	if (health_player_1 <= 0) {
+		win_2++;
+		score_2 += 10;
 		loser_winer_maps(loc_player_2);
-		game_play_map_3(loc_player_1, loc_player_2, loc_winer1, loc_player_2);
+		game_play_map_3(loc_player_1, loc_player_2, loc_winer1, loc_player_2,win_1,win_2,score_1,score_2);
 	}
 
 	else {
+		win_1 ++;
+		score_1 += 10;
 		loser_winer_maps(loc_player_1);
-		game_play_map_3(loc_player_1, loc_player_2,loc_winer1, loc_player_1);
+		game_play_map_3(loc_player_1, loc_player_2,loc_winer1, loc_player_1,win_1,win_2,score_1,score_2);
 	}
 
 
 }
 
-void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2) {
+void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2,int win_1, int win_2, int score_1, int score_2) {
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
 	int health_player_1 = 5;
@@ -3957,16 +3970,20 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 		}
 
 		_setmode(_fileno(stdout), _O_TEXT);
-		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d\033[0m\t\t\tMap Num = 3\t\t\033[1;31mPlayer2:%s   Health:%d Score:%d\033[0m", Loc_to_Username(loc_player_1), health_player_1, LOC_to_Score(loc_player_1), Loc_to_Username(loc_player_2), health_player_2, LOC_to_Score(loc_player_2));
+		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d  wins=%d\033[0m\t\tMap Num = 1\t\033[1;31mPlayer2:%s   Health:%d Score:%d wins=%d\033[0m", Loc_to_Username(loc_player_1), health_player_1, score_1, win_1, Loc_to_Username(loc_player_2), health_player_2, score_2, win_2);
 		// Game tick delay
 		Sleep(100);
 	}
 	if (health_player_1 <= 0) {
-		last_win(loc_player_1, loc_player_2, loc_winer1, loc_winer2, loc_player_2);
+		win_2++;
+		score_2 += 10;
+		last_win(loc_player_1, loc_player_2, loc_winer1, loc_winer2, loc_player_2,win_1,win_2,score_1,score_2);
 	}
 	else
 	{
-		last_win(loc_player_1, loc_player_2, loc_winer1, loc_winer2, loc_player_1);
+		win_1 ++;
+		score_1 += 10;
+		last_win(loc_player_1, loc_player_2, loc_winer1, loc_winer2, loc_player_1, win_1, win_2, score_1, score_2);
 	}
 
 
@@ -3995,8 +4012,6 @@ void loser_winer_maps(int loc) {
 		//Sleep(500);
 		//i--;
 	//}
-	Update_File(loc,10,'s');
-	Update_File(loc, 1, 'w');
 
 }
 
@@ -4007,7 +4022,7 @@ char * Loc_to_Username(int Loc) {
 	while(Finder == NULL)
 		Finder = fopen("profile.bin", "rb");
 
-	profile data_user[50];
+	profile data_user[500];
 
 	while (!feof(Finder)) {
 		fread(&data_user[i], sizeof(profile), 1, Finder);
@@ -4026,7 +4041,7 @@ int LOC_to_Score(int Loc) {
 	while (Finder == NULL)
 		Finder = fopen("profile.bin", "rb");
 
-	profile data_user[50];
+	profile data_user[500];
 
 	while (!feof(Finder)) {
 		fread(&data_user[i], sizeof(profile), 1, Finder);
@@ -4044,7 +4059,7 @@ int loc_to_id(int Loc) {
 	while (Finder == NULL)
 		Finder = fopen("profile.bin", "rb");
 
-	profile data_user[50];
+	profile data_user[500];
 
 	while (!feof(Finder)) {
 		fread(&data_user[i], sizeof(profile), 1, Finder);
@@ -4060,7 +4075,7 @@ void Update_File(int loc,int num ,char s_w_l) {
 	int i = 1;
 	FILE* Finder;
 	Finder = fopen("profile.bin", "rb");
-	profile data_user[50];
+	profile data_user[500];
 
 	while (!feof(Finder)) {
 		fread(&data_user[i], sizeof(profile), 1, Finder);
@@ -4091,10 +4106,19 @@ void Update_File(int loc,int num ,char s_w_l) {
 	fclose(Update);
 }
 
-void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3) {
+void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3,int win_1,int win_2,int score_1,int score_2) {
+	Update_File(loc_1, win_1, 'w');
+	Update_File(loc_1, win_2 , 'l');
+	Update_File(loc_1, score_1, 's');
+
+	Update_File(loc_2, win_2, 'w');
+	Update_File(loc_2, win_1, 'l');
+	Update_File(loc_2, score_2, 's');
+
+	
 	int i = 1;
 	FILE* Finder;
-	profile data_user[50];
+	profile data_user[500] ;
 	Finder = fopen("profile.bin", "rb");
 	while (!feof(Finder)) {
 		fread(&data_user[i], sizeof(profile), 1, Finder);
@@ -4103,13 +4127,13 @@ void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3
 
 	fclose(Finder);
 
-	if (data_user[loc_1].win > data_user[loc_2].win) {
+	if (win_1 > win_2) {
 		printf("1 wiiiiiiin");
 		History his;
 		FILE* History1;
-		History1=fopen("History.bin", "a");
+		History1=fopen("History.bin", "ab");
 		while(History1==NULL)
-			History1 = fopen("History.bin", "a");
+			History1 = fopen("History.bin", "ab");
 		his.id = loc_to_id(loc_1);
 		strcpy(his.player1, Loc_to_Username(loc_1));
 	    strcpy(his.player2, Loc_to_Username(loc_2));
@@ -4118,17 +4142,18 @@ void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3
 		strcpy(his.winer_map3, Loc_to_Username(loc_winer3));
 		strcpy(his.winer_all, Loc_to_Username(loc_1));
 		fwrite(&his, sizeof(History), 1, History1);
-		
+		his.id = loc_to_id(loc_2);
+		fwrite(&his, sizeof(History), 1, History1);
 		fclose(History1);
 	}
-	else if (data_user[loc_1].win <  data_user[loc_2].win) {
+	else if (win_1 <win_2) {
 		printf("2 wiiiiiiin");
 
 		History his;
 		FILE* History1;
-		History1 = fopen("History.bin", "wb");
+		History1 = fopen("History.bin", "ab");
 		while (History1 == NULL)
-			History1 = fopen("History.bin", "wb");
+			History1 = fopen("History.bin", "ab");
 		his.id = loc_to_id(loc_1);
 		strcpy(his.player1, Loc_to_Username(loc_1));
 		strcpy(his.player2, Loc_to_Username(loc_2));
@@ -4136,6 +4161,8 @@ void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3
 		strcpy(his.winer_map2, Loc_to_Username(loc_winer2));
 		strcpy(his.winer_map3, Loc_to_Username(loc_winer3));
 		strcpy(his.winer_all, Loc_to_Username(loc_2));
+		fwrite(&his, sizeof(History), 1, History1);
+		his.id = loc_to_id(loc_2);
 		fwrite(&his, sizeof(History), 1, History1);
 		fclose(History1);
 	}
