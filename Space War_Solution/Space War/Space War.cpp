@@ -27,6 +27,7 @@ struct profile {
 	int lose;
 	int score;
 };
+int loc_to_id(int Loc);
 void last_win(int loc_1, int loc_2, int loc_winer1, int loc_winer2, int loc_winer3, int win_1, int win_2, int score_1, int score_2);
 void Update_File(int loc, int num, char s_w_l);
 void loser_winer_maps(int loc);
@@ -359,6 +360,199 @@ void signup() {
 	system("cls");
 	signin();
 }
+void history_page(int loc) {
+	History User_data[100];
+	system("cls");
+
+	profile  data_win[500];
+
+	int id;
+
+	id = loc_to_id(loc);
+	FILE* data;
+	FILE* win;
+	win = fopen("profile.bin", "rb");
+	data = fopen("History.bin", "rb");
+
+	while (data==NULL)
+	{
+		data = fopen("History.bin", "rb");
+	}
+
+	while (win == NULL)
+	{
+		win = fopen("profile.bin", "rb");
+	}
+
+	int j = 0;
+	int i = 0;
+	while (!feof(win)) {
+		fread(&data_win[j], sizeof(profile), 1, win);
+		j++;
+	}
+
+
+	while (!feof(data)) {
+		fread(&User_data[i], sizeof(History), 1, data);
+		i++;
+	}
+	green();
+	printf("\t\tHistory page\n");
+	reset();
+
+	red();
+	printf("wins=%d\n", data_win[loc].win);
+	reset();
+
+
+	yellow();
+	printf("%-4s%-15s%-15s%-15s%-15s%-15s%-15s\n", "ID", "Player1", "player2", "winner_map_1", "winner_map_2", "winner_map_3", "Winner all");
+	reset();
+	i--;
+	while (i>=0) {
+		if (User_data[i].id == id) {
+			random_color(i);
+			printf("%-4d%-15s%-15s%-15s%-15s%-15s%-15s\n", User_data[i].id, User_data[i].player1, User_data[i].player2, User_data[i].winer_map1, User_data[i].winer_map2, User_data[i].winer_map3, User_data[i].winer_all);
+			reset();
+		}
+		i--;
+	}
+
+	fclose(win);
+	fclose(data);
+	Sleep(10000);
+
+
+
+
+
+}
+
+
+
+
+
+void signup_player_2(int loc_player_1) {
+	system("cls");
+	profile prof;
+	char pass[40];
+	FILE* Prof_Data;
+	char username[40];
+	Prof_Data = fopen("profile.bin", "a");
+	system("color 70");
+	printf("\t\tsign up page\n\n");
+	///////////////////////////////////////////////////
+	printf("Enter Your UserName=");
+	magneta();
+	scanf("%s", username);
+	reset();
+	system("color 70");
+	while (1) {
+		if (Username_checker(username) >= 1) {
+			system("cls");
+			printf("Your Username is already taken\n");
+			magneta();
+			printf("Please another Enter UserName=");
+			reset();
+			system("color 70");
+			scanf("%s", username);
+		}
+		else {
+			strcpy(prof.UserName, username);
+			break;
+		}
+	}
+	system("cls");
+	/////////////////////////////////////////// /
+	system("color 7d");
+	printf("\t\tsign up page\n\n");
+	printf("Enter Your Password=");
+	blue();
+	scanf("%s", pass);
+	reset();
+	system("color 7d");
+	while (1)
+	{
+		if (strlen(pass) < 8) {
+			system("cls");
+			printf("\t\tsign up page\n\n");
+			printf("Your Password is Too Short \nEnter Other Password=");
+			blue();
+			scanf("%s", pass);
+			reset();
+		}
+		else {
+			strcpy(prof.Password, pass);
+			break;
+		}
+	}
+	printf("Enter Your Password Again=");
+	blue();
+	scanf("%s", pass);
+	reset();
+
+	while (1)
+	{
+		if (strcmp(pass, prof.Password) != 0) {
+
+			printf("Your Passwords isn,t same\nEnter Password Again=");
+			blue();
+			scanf("%s", pass);
+			reset();
+			system("color 7d");
+		}
+		else {
+			break;
+		}
+	}
+	/////////////////////////////////////
+	char email[40];
+	system("cls");
+	printf("\t\tsign up page\n\n");
+	printf("\nEnter Your Email=");
+	magneta();
+	scanf("%s", email);
+	reset();
+	system("color 70");
+	while (1)
+	{
+		char a[3] = { "@" };
+		if (strstr(email, a) == NULL) {
+			system("cls");
+			magneta();
+			printf("Your Email is Wrong \nEnter Other Email=");
+			reset();
+			system("color 70");
+			scanf("%s", pass);
+		}
+		else {
+			strcpy(prof.email, email);
+			break;
+		}
+	}
+	//////////////////////////////////////////////////////
+	while (1) {
+		if (Prof_Data == NULL) {
+			Prof_Data = fopen("profile.bin", "a");
+		}
+		else {
+			prof.score = 0;
+			prof.win = 0;
+			prof.lose = 0;
+			int last = last_Id();
+			prof.id = last--;
+			fwrite(&prof, sizeof(profile), 1, Prof_Data);
+			break;
+		}
+
+	}
+	fclose(Prof_Data);
+	system("cls");
+	printf("Your sign up is successful\n Now you can sign in");
+	Sleep(1200);
+	system("cls");
+	signin_player2(loc_player_1);
+}
 
 int Username_checker(const char const * username){
 	int i = 1;
@@ -657,7 +851,7 @@ void game_menu(char * username) {
 		Change_profile(username);
 		break;
 	case 3:
-		;                                                                      ///history
+		history_page(Username_checker(username));                                                                      ///history
 		break;
 	case 4:
 		system("cls");
@@ -918,7 +1112,49 @@ void signin_player2(int loc_player_1) {
 		game_play_map_1(loc_player_1,loc_player_2);
 	}
 	else {
+		system("cls");
+		int selected = 1;
+		int keypress;
+		int p = 45;
+		int p1 = 62;
+
+		while (1) {
+			printf("\t\tplayer 2 menu\n");
+			cyan();
+			if (selected == 1)
+				printf("%c%c", p, p1);
+			printf("1.sign in again\n");
+			reset();
+			green();
+			if (selected == 2)
+				printf("%c%c", p, p1);
+			printf("2.sign up\n");
+			reset;
+			keypress = _getch();
+			if (keypress == 72 && selected > 1) {
+				selected--;
+			}
+			else if (keypress == 80 && selected < 4) {
+				selected++;
+			}
+			else if (keypress == 13) {
+				break;
+			}
+			system("cls");
+
+		}
+		switch (selected)
+		{
+		case 1:                                                //start
 		signin_player2(loc_player_1);
+			break;
+		case 2:
+		signup_player_2(loc_player_1);
+			break;
+		default:
+			break;
+		}
+
 	}
 
 
@@ -3970,7 +4206,7 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 		}
 
 		_setmode(_fileno(stdout), _O_TEXT);
-		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d  wins=%d\033[0m\t\tMap Num = 1\t\033[1;31mPlayer2:%s   Health:%d Score:%d wins=%d\033[0m", Loc_to_Username(loc_player_1), health_player_1, score_1, win_1, Loc_to_Username(loc_player_2), health_player_2, score_2, win_2);
+		printf("\033[1;32mPlayer1:%s  Health:%d  Score:%d  wins=%d\033[0m\t\tMap Num = 3\t\033[1;31mPlayer2:%s   Health:%d Score:%d wins=%d\033[0m", Loc_to_Username(loc_player_1), health_player_1, score_1, win_1, Loc_to_Username(loc_player_2), health_player_2, score_2, win_2);
 		// Game tick delay
 		Sleep(100);
 	}
@@ -3992,16 +4228,17 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 void loser_winer_maps(int loc) {
 	system("cls");
 	hidecursor();
-	for (int i = 0; i <20; i++) {
+	for (int i = 0; i <32; i++) {
 		for (size_t j = 0; j < 8; j++)
 		{
 			random_color(i+j);
 			printf("!!%s Win!! ", Loc_to_Username(loc));
 			reset();
-			Sleep(50);
+			Sleep(10);
 		}
 		puts("");
 	}
+	Sleep(1000);
 	//int i =2;
 	//while (i > 0) {
 		//system("color 40");
@@ -4128,7 +4365,20 @@ void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3
 	fclose(Finder);
 
 	if (win_1 > win_2) {
-		printf("1 wiiiiiiin");
+		system("cls");
+		int i =20;
+	while (i > 0) {
+
+		printf("\n\n\n\n\n\t%s win\t\t%s win\t\t%s win\t\t%s win\t\t%s win",Loc_to_Username(loc_1), Loc_to_Username(loc_1), Loc_to_Username(loc_1),Loc_to_Username(loc_1), Loc_to_Username(loc_1));
+		system("color 45");
+		Sleep(50);
+		system("color 17");
+		Sleep(50);
+		system("color 24");
+		Sleep(50);
+		i--;
+	}
+
 		History his;
 		FILE* History1;
 		History1=fopen("History.bin", "ab");
@@ -4147,7 +4397,22 @@ void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3
 		fclose(History1);
 	}
 	else if (win_1 <win_2) {
-		printf("2 wiiiiiiin");
+		
+		system("cls");
+		int i = 20;
+		while (i > 0) {
+
+			printf("\n\n\n\n\n\t%s win\t\t%s win\t\t%s win\t\t%s win\t\t%s win", Loc_to_Username(loc_2), Loc_to_Username(loc_2), Loc_to_Username(loc_2), Loc_to_Username(loc_2), Loc_to_Username(loc_2));
+			system("color 45");
+			Sleep(50);
+			system("color 17");
+			Sleep(50);
+			system("color 24");
+			Sleep(50);
+			i--;
+		}
+
+
 
 		History his;
 		FILE* History1;
@@ -4168,9 +4433,6 @@ void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3
 	}
 
 }
-
-
-
 
 
 
