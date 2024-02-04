@@ -1,26 +1,26 @@
 ﻿  Space War.cpp
-F:\My_project\Space War_Solution\Space War\Space War.cpp(49,33): warning C4114: same type qualifier used more than once
-F:\My_project\Space War_Solution\Space War\Space War.cpp(187,3): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(554,33): warning C4114: same type qualifier used more than once
-F:\My_project\Space War_Solution\Space War\Space War.cpp(653,4): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(658,4): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(700,2): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(703,2): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(819,3): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(883,3): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1138,4): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1340,83): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1366,81): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1391,83): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1416,81): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2013,117): warning C4806: '==': unsafe operation: no value of type 'bool' promoted to type 'int' can equal the given constant
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2029,84): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2081,82): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2134,84): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2185,82): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(3298,84): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(3359,82): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(3421,84): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(3481,82): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(4248,18): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+F:\My_project\Space War_Solution\Space War\Space War.cpp(51,33): warning C4114: same type qualifier used more than once
+F:\My_project\Space War_Solution\Space War\Space War.cpp(193,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(560,33): warning C4114: same type qualifier used more than once
+F:\My_project\Space War_Solution\Space War\Space War.cpp(659,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(664,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(706,2): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(709,2): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(825,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(889,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1144,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1352,83): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1378,81): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1403,83): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1428,81): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2025,117): warning C4806: '==': unsafe operation: no value of type 'bool' promoted to type 'int' can equal the given constant
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2041,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2093,82): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2146,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2197,82): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(3310,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(3371,82): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(3433,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(3493,82): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(4260,18): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   Space War.vcxproj -> F:\My_project\Space War_Solution\x64\Debug\Space War.exe

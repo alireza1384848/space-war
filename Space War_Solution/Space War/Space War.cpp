@@ -8,6 +8,8 @@
 #include<time.h>
 #include <io.h>
 #include <fcntl.h>
+#include <mmsystem.h>
+#pragma comment(lib, "Winmm.lib")
 #pragma execution_character_set("utf-8")
 struct History {
 	int id;
@@ -168,6 +170,10 @@ void start_page() {
 }
 
 void menu_inform() {
+	const char* filename = "F:\\My_project\\Space War_Solution\\Space War\\MENU.wav";
+	PlaySoundA(filename, NULL, SND_LOOP | SND_ASYNC);
+
+
 	int selected=1;
 	int keypress;
 	int p = 45;
@@ -1167,6 +1173,12 @@ void signin_player2(int loc_player_1) {
 }
 
 void game_play_map_1(int loc_player_1,int loc_player_2,int health) {
+
+	const char* filename1 = "F:\\My_project\\Space War_Solution\\Space War\\game play.wav";
+	PlaySoundA(filename1, NULL, SND_LOOP | SND_ASYNC);
+
+
+
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
 	int health_player_1 = 0;
@@ -4452,8 +4464,8 @@ void last_win(int loc_1,int loc_2,int loc_winer1, int loc_winer2 ,int loc_winer3
 
 
 int main() {
+
 	
-	//printf("%d", last_Id());
 	
 	start_page();
 	//menu_inform();
