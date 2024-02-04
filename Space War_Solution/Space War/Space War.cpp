@@ -33,9 +33,9 @@ void Update_File(int loc, int num, char s_w_l);
 void loser_winer_maps(int loc);
 int LOC_to_Score(int Loc);
 char* Loc_to_Username(int Loc);
-void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2, int win_1, int win_2, int score_1, int score_2);
-void game_play_map_2(int loc_player_1, int loc_player_2, int loc_winer1, int win_1, int win_2, int score_1, int score_2);
-void game_play_map_1(int loc_player_1, int loc_player_2);
+void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2, int win_1, int win_2, int score_1, int score_2, int health);
+void game_play_map_2(int loc_player_1, int loc_player_2, int loc_winer1, int win_1, int win_2, int score_1, int score_2, int health);
+void game_play_map_1(int loc_player_1, int loc_player_2, int health);
 
 void signin_player2(int loc_player_1);
 void change_email(int loc, char * username);
@@ -174,7 +174,7 @@ void menu_inform() {
 	int p1 = 62;
 	
 		while (1) {
-		printf("Hello\n");
+		printf("\t\t\t\tHello\n");
 			cyan();
 		if (selected == 1)
 		printf("%c%c",p,p1);
@@ -360,8 +360,8 @@ void signup() {
 	system("cls");
 	signin();
 }
-void history_page(int loc) {
-	History User_data[100];
+void history_page(int loc, char * name) {
+	History User_data[100] = {};
 	system("cls");
 
 	profile  data_win[500];
@@ -401,18 +401,20 @@ void history_page(int loc) {
 	reset();
 
 	red();
-	printf("wins=%d\n", data_win[loc].win);
+	printf("\tWins=%d\t\tLOSE=%d\n", data_win[loc-1].win, data_win[loc-1].lose);
 	reset();
 
 
 	yellow();
-	printf("%-4s%-15s%-15s%-15s%-15s%-15s%-15s\n", "ID", "Player1", "player2", "winner_map_1", "winner_map_2", "winner_map_3", "Winner all");
+	printf("|%-4s|%-15s|%-15s|%-15s|%-15s|%-15s|%-15s\n", "ID", "Player1", "player2", "winner_map_1", "winner_map_2", "winner_map_3", "Winner all");
+	printf("_________________________________________________________________________________________________________________\n");
 	reset();
 	i--;
 	while (i>=0) {
 		if (User_data[i].id == id) {
 			random_color(i);
-			printf("%-4d%-15s%-15s%-15s%-15s%-15s%-15s\n", User_data[i].id, User_data[i].player1, User_data[i].player2, User_data[i].winer_map1, User_data[i].winer_map2, User_data[i].winer_map3, User_data[i].winer_all);
+			printf("|%-4d|%-15s|%-15s|%-15s|%-15s|%-15s|%-15s|\n", User_data[i].id, User_data[i].player1, User_data[i].player2, User_data[i].winer_map1, User_data[i].winer_map2, User_data[i].winer_map3, User_data[i].winer_all);
+			printf("_________________________________________________________________________________________________________________\n");
 			reset();
 		}
 		i--;
@@ -420,17 +422,12 @@ void history_page(int loc) {
 
 	fclose(win);
 	fclose(data);
-	Sleep(10000);
-
-
-
-
-
+	system("pause");
+	system("cls");
+	int m = 0;
+	m = loc;
+	game_menu(name);
 }
-
-
-
-
 
 void signup_player_2(int loc_player_1) {
 	system("cls");
@@ -802,14 +799,14 @@ void changepass(char * email,int loc) {
 
 }
 
-void game_menu(char * username) {
+void game_menu(char username[50]) {
 	int selected = 1;
 	int keypress;
 	int p = 45;
 	int p1 = 62;
 
 	while (1) {
-		printf("Game menu\n");
+		printf("\t\t\tGame menu\n");
 		cyan();
 		if (selected == 1)
 			printf("%c%c", p, p1);
@@ -851,7 +848,7 @@ void game_menu(char * username) {
 		Change_profile(username);
 		break;
 	case 3:
-		history_page(Username_checker(username));                                                                      ///history
+		history_page(Username_checker(username),username);                                                                      ///history
 		break;
 	case 4:
 		system("cls");
@@ -1109,7 +1106,16 @@ void signin_player2(int loc_player_1) {
 
 	if (Username_checker(username) >= 1 && passfinder(Username_checker(username), pass) == 0)
 	{
-		game_play_map_1(loc_player_1,loc_player_2);
+		int Health = 0;
+		system("cls");
+		printf("\t\t\tModify Health Amount\n");
+		green();
+		printf("Entet your Amount Health =");
+		reset();
+		red();
+		scanf("%d", &Health);
+		reset();
+		game_play_map_1(loc_player_1,loc_player_2,Health);
 	}
 	else {
 		system("cls");
@@ -1160,11 +1166,13 @@ void signin_player2(int loc_player_1) {
 
 }
 
-void game_play_map_1(int loc_player_1,int loc_player_2) {
+void game_play_map_1(int loc_player_1,int loc_player_2,int health) {
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
-	int health_player_1 = 5;
-	int health_player_2 = 5;
+	int health_player_1 = 0;
+	health_player_1 = health;
+	int health_player_2 = 0;
+	health_player_2 = health;
 	bool ghalb = 1;
 	int win_1 = 0;
 	int win_2 = 0;
@@ -1690,21 +1698,23 @@ void game_play_map_1(int loc_player_1,int loc_player_2) {
 		win_2++;
 		score_2 += 10;
 	loser_winer_maps(loc_player_2);
-	game_play_map_2(loc_player_1,loc_player_2, loc_player_2,win_1,win_2,score_1,score_2);
+	game_play_map_2(loc_player_1,loc_player_2, loc_player_2,win_1,win_2,score_1,score_2,health);
 	}
 	else {
 		win_1 ++;
 		score_1 += 10;
 		loser_winer_maps(loc_player_1);
-		game_play_map_2(loc_player_1, loc_player_2, loc_player_1, win_1, win_2, score_1, score_2);
+		game_play_map_2(loc_player_1, loc_player_2, loc_player_1, win_1, win_2, score_1, score_2,health);
 	}
 }
 
-void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_1, int win_2,int score_1,int score_2) {
+void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_1, int win_2,int score_1,int score_2, int health) {
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
-	int health_player_1 = 5;
-	int health_player_2 = 5;
+	int health_player_1 = 0;
+	health_player_1 = health;
+	int health_player_2 = 0;
+	health_player_2 = health;
 	bool ghalb = 1;
 
 
@@ -2907,24 +2917,26 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_
 		win_2++;
 		score_2 += 10;
 		loser_winer_maps(loc_player_2);
-		game_play_map_3(loc_player_1, loc_player_2, loc_winer1, loc_player_2,win_1,win_2,score_1,score_2);
+		game_play_map_3(loc_player_1, loc_player_2, loc_winer1, loc_player_2,win_1,win_2,score_1,score_2,health);
 	}
 
 	else {
 		win_1 ++;
 		score_1 += 10;
 		loser_winer_maps(loc_player_1);
-		game_play_map_3(loc_player_1, loc_player_2,loc_winer1, loc_player_1,win_1,win_2,score_1,score_2);
+		game_play_map_3(loc_player_1, loc_player_2,loc_winer1, loc_player_1,win_1,win_2,score_1,score_2,health);
 	}
 
 
 }
 
-void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2,int win_1, int win_2, int score_1, int score_2) {
+void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc_winer2,int win_1, int win_2, int score_1, int score_2, int health) {
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
-	int health_player_1 = 5;
-	int health_player_2 = 5;
+	int health_player_1 = 0;
+	health_player_1 = health;
+	int health_player_2 = 0;
+	health_player_2 = health;
 	bool ghalb = 1;
 
 
@@ -4214,12 +4226,14 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 		win_2++;
 		score_2 += 10;
 		last_win(loc_player_1, loc_player_2, loc_winer1, loc_winer2, loc_player_2,win_1,win_2,score_1,score_2);
+		menu_inform();
 	}
 	else
 	{
 		win_1 ++;
 		score_1 += 10;
 		last_win(loc_player_1, loc_player_2, loc_winer1, loc_winer2, loc_player_1, win_1, win_2, score_1, score_2);
+		menu_inform();
 	}
 
 
@@ -4238,6 +4252,7 @@ void loser_winer_maps(int loc) {
 		}
 		puts("");
 	}
+	//menu_inform();
 	Sleep(1000);
 	//int i =2;
 	//while (i > 0) {

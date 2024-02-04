@@ -1,26 +1,26 @@
 ﻿  Space War.cpp
 F:\My_project\Space War_Solution\Space War\Space War.cpp(49,33): warning C4114: same type qualifier used more than once
 F:\My_project\Space War_Solution\Space War\Space War.cpp(187,3): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(557,33): warning C4114: same type qualifier used more than once
-F:\My_project\Space War_Solution\Space War\Space War.cpp(656,4): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(661,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(554,33): warning C4114: same type qualifier used more than once
+F:\My_project\Space War_Solution\Space War\Space War.cpp(653,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(658,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(700,2): warning C4551: function call missing argument list
 F:\My_project\Space War_Solution\Space War\Space War.cpp(703,2): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(706,2): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(822,3): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(886,3): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1132,4): warning C4551: function call missing argument list
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1332,83): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1358,81): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1383,83): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(1408,81): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2003,117): warning C4806: '==': unsafe operation: no value of type 'bool' promoted to type 'int' can equal the given constant
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2019,84): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2071,82): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2124,84): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(2175,82): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(3286,84): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(3347,82): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(3409,84): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(3469,82): warning C4553: '==': result of expression not used; did you intend '='?
-F:\My_project\Space War_Solution\Space War\Space War.cpp(4234,18): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
+F:\My_project\Space War_Solution\Space War\Space War.cpp(819,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(883,3): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1138,4): warning C4551: function call missing argument list
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1340,83): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1366,81): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1391,83): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(1416,81): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2013,117): warning C4806: '==': unsafe operation: no value of type 'bool' promoted to type 'int' can equal the given constant
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2029,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2081,82): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2134,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(2185,82): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(3298,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(3359,82): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(3421,84): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(3481,82): warning C4553: '==': result of expression not used; did you intend '='?
+F:\My_project\Space War_Solution\Space War\Space War.cpp(4248,18): warning C4267: 'argument': conversion from 'size_t' to 'int', possible loss of data
   Space War.vcxproj -> F:\My_project\Space War_Solution\x64\Debug\Space War.exe
