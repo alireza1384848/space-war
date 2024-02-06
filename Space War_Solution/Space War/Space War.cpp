@@ -157,16 +157,80 @@ void random_color(int i){
 	}
 
 }
-///////////////////////////////////////////////
+/////////////////////////////////////////////// 
+
+int Random() {
+	srand(time(NULL));
+	return 1+rand() % 10;
+}
+
 void start_page() {
-	system("color 40");
-	yellow();
-	printf("Space war");
-    reset();
-	Sleep(1000);
+
+
+	//system("color 40");
+	red();
+	printf("    d888888o.   8 888888888o      .8.           ,o888888o.    8 8888888888 \n ");
+	Sleep(50);
+	printf(" .`8888:' `88. 8 8888    `88.   .888.         8888     `88.  8 8888       \n");
+	Sleep(50);
+	printf(" 8.`8888.   Y8 8 8888     `88  :88888.     ,8 8888       `8. 8 8888          \n");
+	Sleep(50);
+	printf(" `8.`8888.     8 8888     ,88 . `88888.    88 8888           8 8888        \n");
+	Sleep(50);
+	printf(" `8.`8888.     8 8888     ,88 . `88888.    88 8888           8 8888        \n");
+	Sleep(50);
+	printf("  `8.`8888.    8 8888.   ,88'.8. `88888.   88 8888           8 888888888888\n");
+	Sleep(50);
+	printf("   `8.`8888.   8 888888888P'.8`8. `88888.  88 8888           8 8888         \n");
+	Sleep(50);
+	printf("    `8.`8888.  8 8888      .8' `8. `88888. 88 8888           8 8888         \n");
+	Sleep(50);
+	printf("8b   `8.`8888. 8 8888     .8'   `8. `88888.`8 8888       .8' 8 8888         \n");
+	Sleep(50);
+	printf("`8b.  ;8.`8888 8 8888    .888888888. `88888.  8888     ,88'  8 8888         \n");
+	Sleep(50);
+	printf(" `Y8888P ,88P' 8 8888   .8'       `8. `88888.  `8888888P'    8 888888888888\n");
+	Sleep(50);
+	printf("\n");
+	Sleep(50);
+	printf("                 `8.`888b                 ,8' .8.          8 888888888o. \n");
+	Sleep(50);
+	printf("                  `8.`888b               ,8' .888.         8 8888    `88.\n");
+	Sleep(50);
+	printf("                   `8.`888b             ,8' :88888.        8 8888     `88\n");
+	Sleep(50);
+	printf("                    `8.`888b     .b    ,8' . `88888.       8 8888     ,88\n");
+	Sleep(50);
+	printf("                      `8.`888b    88b  ,8' .8. `88888.      8 8888.   ,88'\n");
+	Sleep(50);
+	printf("                       `8.`888b .`888b,8' .8`8. `88888.     8 888888888P'\n");
+	Sleep(50); 
+	printf("                        `8.`888b8.`8888' .8' `8. `88888.    8 8888`8b\n");
+	Sleep(50); 
+	printf("                         `8.`888`8.`88' .8'   `8. `88888.   8 8888 `8b.\n");
+	Sleep(50); 
+	printf("                          `8.`8' `8,`' .888888888. `88888.  8 8888   `8b.\n");
+	Sleep(50);
+	printf("                           `8.`   `8' .8'       `8. `88888. 8 8888     `88.\n");
+	reset();
+	for (int i = 0; i < 20; i++) {
+		Sleep(50);
+		system("color 06");
+		Sleep(50);
+		system("color 05");
+		Sleep(50);
+		system("color 02");
+
+	}
+	system("color 04");
+		Sleep(100);
 	system("cls");
 
 	menu_inform();
+
+
+
+
 }
 
 void menu_inform() {
@@ -1313,6 +1377,7 @@ void game_play_map_1(int loc_player_1,int loc_player_2,int health) {
 		}
 		if (keyPressed(PLAYER1_SHOOT)) {
 			Beep(500, 50);
+		//	health_player_1++;
 			if (up == 1) {
 				player1_bullet = player1_pos;
 				U = 1; D = 0; L = 0; R = 0;
@@ -1433,6 +1498,7 @@ void game_play_map_1(int loc_player_1,int loc_player_2,int health) {
 		}
 		if (keyPressed(PLAYER2_SHOOT)) {
 			Beep(800, 50);
+			//health_player_2++;
 			if (up_2 == 1) {
 				player2_bullet = player2_pos;
 				U2 = 1; D2 = 0; L2 = 0; R2 = 0;
@@ -1546,6 +1612,15 @@ void game_play_map_1(int loc_player_1,int loc_player_2,int health) {
 			}
 		}
 
+
+
+		///////////////////////////////friend fire
+		if (player1_bullet.Y == player1_pos.Y && player1_bullet.X == player1_pos.X)
+			health_player_1--;
+		if (player2_bullet.Y == player2_pos.Y && player2_bullet.X == player2_pos.X )
+			health_player_2--;
+		//////////////////////
+
 		// Draw map
 		SetConsoleOutputCP(65001);
 		_setmode(_fileno(stdout), _O_U16TEXT);
@@ -1635,6 +1710,10 @@ void game_play_map_1(int loc_player_1,int loc_player_2,int health) {
 
 		map[18][84] = L'█';
 		map[19][84] = L'█';
+		if (ghalb == 0 && Random()==2) {
+			ghalb = 1;
+			//map[4][55] = L'❤';
+		}
 
 		int m = 0;
 		for (int i = 0; i < 24; i++) {
@@ -1721,6 +1800,7 @@ void game_play_map_1(int loc_player_1,int loc_player_2,int health) {
 }
 
 void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_1, int win_2,int score_1,int score_2, int health) {
+
 	int up = 0, down = 0, right = 0, left = 0;
 	int up_2 = 0, down_2 = 0, right_2 = 0, left_2 = 0;
 	int health_player_1 = 0;
@@ -1997,6 +2077,7 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_
 		}
 		if (keyPressed(PLAYER1_SHOOT)) {
 			Beep(500, 50);
+	//		health_player_1 +=1;
 			score_bullet_player_1++;
 			score_move_1++;
 			if (up == 1) {
@@ -2228,6 +2309,7 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_
 			}
 		}
 		if (keyPressed(PLAYER2_SHOOT)) {
+		//	health_player_2++;
 			score_move_2++;
 			Beep(800, 50);
 			score_bullet_player_2++;
@@ -2252,7 +2334,7 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_
 			if (saved_frag_1 + 2 == score_bullet_player_1)frag_player_1 = 0;
 			if (saved_frag_2 + 2 == score_bullet_player_2)frag_player_2 = 0;
 
-			//upgrade bullet
+			//upgrade special bullet
 		if (saved_1 + 6 == score_bullet_player_1) {
 			upgrade_bullets_1 = 0;
 		}
@@ -2260,6 +2342,11 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_
 			upgrade_bullets_2 = 0;
 		}
 		/////
+		//if (player1_bullet.Y == player1_pos.Y && player1_bullet.X == player1_pos.X && upgrade_bullets_1 == 0)
+			//health_player_1--;
+		//if (player2_bullet.Y == player2_pos.Y && player2_bullet.X == player2_pos.X && upgrade_bullets_2 == 0)
+			//health_player_2--;
+
 
 		// Update bullet positions
 		if (player1_bullet.X != -1) {
@@ -2270,8 +2357,12 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_
 					if (map[moveDirection(player1_bullet, 0, -1).Y][moveDirection(player1_bullet, 0, -1).X] != L'█' || ghost_player_1 == 1)
 					{
 						player1_bullet.Y--;
+						if (player1_bullet.Y == player1_pos.Y && player1_bullet.X == player1_pos.X && upgrade_bullets_1 == 0)
+							health_player_1--;
+
 						if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 0)
 							health_player_2--;
+
 
 						else if (player1_bullet.Y == player2_pos.Y && player1_bullet.X == player2_pos.X && upgrade_bullets_1 == 1)
 							health_player_2 -= 2;
@@ -2357,6 +2448,7 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_
 				}
 
 			}
+		
 			else {
 				if (U == 1) {
 					if (map[moveDirection(player1_bullet, 0, -1).Y][moveDirection(player1_bullet, 0, -1).X] != L'█')
@@ -2725,12 +2817,17 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_
 		}
 		//////////////////////////////khat chi
 		for (int i = 7; i < 14; i++) {
-			if (wall_y != i)
+			if (wall_y == i && wall_x==12)
+				map[i][12] = L' ';
+			else
 				map[i][12] = L'║';
 		}
 		for (int j = 7; j < 14; j++) {
-			if (wall_y != j)
-				map[j][99] = L'║';
+				if(wall_x==99 && wall_y==j)
+				map[j][99] = L' ';
+
+				else
+					map[j][99] = L'║';
 		}
 		map[3][86] = L'█';
 		map[4][86] = L'█';
@@ -2825,9 +2922,33 @@ void game_play_map_2(int loc_player_1, int loc_player_2,int loc_winer1, int win_
 
 		if (pos_ghost_player == 0)
 			map[3][56] = L'ѽ';
+		
 		if (ghalb == 1)
 			map[10][56] = L'❤';
 
+
+		if (ghalb == 0 && Random() == 2) {
+			ghalb = 1;
+		}
+
+		if (pos_ghost_player == 1 && Random() == 1) {
+			pos_ghost_player = 0;
+		}
+
+
+		if (pos_upgrade_bullets_L==1 && Random() == 6) {
+			pos_upgrade_bullets_L = 0;
+		}
+
+
+		if (pos_upgrade_bullets_R == 1 && Random() == 8) {
+			pos_upgrade_bullets_R = 0;
+		}
+
+		if (pos_frag_player == 1 && Random() == 5) {
+			pos_frag_player = 0;
+		
+		}
 
 
 		for (int i = 0; i < 24; i++) {
@@ -3000,7 +3121,6 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 	int saved_frag_2 = 0;
 	hidecursor();
 	while (health_player_1>0 && health_player_2>0)
-	
 	{
 		// Clear screen
 		system("cls");
@@ -3257,6 +3377,7 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 		}
 		if (keyPressed(PLAYER1_SHOOT)) {
 			Beep(500, 50);
+			//health_player_1++;
 			score_bullet_player_1++;
 			score_move_1++;
 			if (up == 1) {
@@ -3525,6 +3646,7 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 		}
 		if (keyPressed(PLAYER2_SHOOT)) {
 			score_move_2++;
+			//health_player_2++;
 			Beep(800, 50);
 			score_bullet_player_2++;
 			if (up_2 == 1) {
@@ -3556,6 +3678,14 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 			upgrade_bullets_2 = 0;
 		}
 		/////
+
+		/////////////////friend fire
+//		if (player1_bullet.Y == player1_pos.Y && player1_bullet.X == player1_pos.X)
+	//		health_player_1--;
+		//if (player2_bullet.Y == player2_pos.Y && player2_bullet.X == player2_pos.X)
+			//health_player_2--;
+
+
 
 		// Update bullet positions
 		if (player1_bullet.X != -1) {
@@ -4022,13 +4152,17 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 		}
 		//////////////////////////////khat chi
 		for (int i = 4; i < 20; i++) {
-			if (wall_x != 55 && wall_y != i)
+			if (wall_x == 55 && wall_y == i)
+				map[i][55] = L' ';
+			else
 				map[i][55] = L'║';
 		}
 
 		for (int i = 4; i < 20; i++)
 		{
-			if (wall_x != 58 && wall_y != i)
+			if (wall_x == 58 && wall_y == i)
+				map[i][58] = L' ';
+			else
 				map[i][58] = L'║';
 		}
 		for (int i = 67; i < 105; i++)
@@ -4118,6 +4252,31 @@ void game_play_map_3(int loc_player_1, int loc_player_2, int loc_winer1, int loc
 		map[20][55] = L'█';
 		map[20][57] = L'█';
 		map[20][58] = L'█';
+		if (ghalb == 0 && Random() == 2) {
+			ghalb = 1;
+		}
+
+		if (pos_ghost_player == 1 && Random() == 1) {
+			pos_ghost_player = 0;
+		}
+
+
+		if (pos_upgrade_bullets_L == 1 && Random() == 6) {
+			pos_upgrade_bullets_L = 0;
+		}
+
+
+		if (pos_upgrade_bullets_R == 1 && Random() == 8) {
+			pos_upgrade_bullets_R = 0;
+		}
+
+		if (pos_frag_player == 1 && Random() == 5) {
+			pos_frag_player = 0;
+
+		}
+
+
+
 		for (int i = 0; i < 24; i++) {
 
 			for (int j = 0; j < 112; j++) {
